@@ -325,7 +325,20 @@ function initTopbar() {
 
 function initServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
-  navigator.serviceWorker.register("./sw.js").catch(() => {});
+  navigator.serviceWorker
+    .register("./sw.js")
+    .then((reg) => {
+      reg.update().catch(() => {});
+      setInterval(() => reg.update().catch(() => {}), 60_000);
+    })
+    .catch(() => {});
+
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloaded) return;
+    reloaded = true;
+    location.reload();
+  });
 }
 
 function injectEmbedStyles() {
