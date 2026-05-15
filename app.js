@@ -15,8 +15,10 @@ const DEFAULT_STATE = {
     }
   ],
   links: [
+    { title: "FIAB Arona (sito)", url: "https://sites.google.com/view/fiab-arona/home", group: "FIAB" },
     { title: "FIAB (sito nazionale)", url: "https://www.fiabitalia.it", group: "FIAB" },
-    { title: "Bicitalia", url: "https://www.bicitalia.org", group: "Ciclovie" }
+    { title: "Bicitalia", url: "https://www.bicitalia.org", group: "Ciclovie" },
+    { title: "Albergabici", url: "https://www.albergabici.it/it/", group: "Ciclovie" }
   ],
   stations: []
 };
