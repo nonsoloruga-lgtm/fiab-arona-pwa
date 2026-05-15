@@ -105,7 +105,17 @@
         <section id="view-stations" class="view">
           <div class="sectionhead">
             <div class="sectionhead__title">Colonnine ricaricabili</div>
-            <div class="sectionhead__subtitle">Inserisci punti di ricarica (e-bike / power bank / prese) e condividi l’elenco.</div>
+            <div class="sectionhead__subtitle">
+              Le colonnine possono essere <b>Pubbliche</b> (uguali per tutti) e <b>Mie</b> (solo su questo dispositivo). Le pubbliche arrivano da un file sul sito: serve connessione per aggiornarle.
+            </div>
+          </div>
+
+          <div class="chips">
+            <button class="chip chip--active" id="chipStationsAll" type="button">Tutte</button>
+            <button class="chip" id="chipStationsPublic" type="button">Pubbliche</button>
+            <button class="chip" id="chipStationsMine" type="button">Mie</button>
+            <button class="chip chip--accent" id="btnStationsRefreshPublic" type="button">Aggiorna pubbliche</button>
+            <a class="chip chip--ghost" id="btnStationsPropose" href="#" target="_blank" rel="noopener noreferrer">Proponi una colonnina</a>
           </div>
 
           <form id="stationForm" class="form">

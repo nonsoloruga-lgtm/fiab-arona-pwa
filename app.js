@@ -1,4 +1,6 @@
 const STORAGE_KEY = "fiab_arona_pwa_state_v1";
+const PUBLIC_STATIONS_URL = "./public-stations.json";
+const PUBLIC_REPO = { owner: "nonsoloruga-lgtm", repo: "fiab-arona-pwa" };
 
 const clone = (value) => {
   if (typeof structuredClone === "function") return structuredClone(value);
@@ -105,6 +107,8 @@ function stationMapsLink(st) {
 
 let state = loadState();
 let editingStationIndex = null;
+let publicStations = [];
+let stationsFilter = "all"; // all | public | mine
 
 function setStationEditing(idx) {
   editingStationIndex = typeof idx === "number" ? idx : null;
@@ -112,6 +116,19 @@ function setStationEditing(idx) {
   const cancelBtn = document.querySelector("#btnStationCancel");
   if (submitBtn) submitBtn.textContent = editingStationIndex === null ? "Aggiungi" : "Salva modifiche";
   if (cancelBtn) cancelBtn.classList.toggle("hidden", editingStationIndex === null);
+}
+
+async function fetchPublicStations() {
+  try {
+    const res = await fetch(`${PUBLIC_STATIONS_URL}?v=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const list = Array.isArray(data?.stations) ? data.stations : [];
+    publicStations = list;
+    return true;
+  } catch (_) {
+    return false;
+  }
 }
 
 function renderMaps() {
@@ -190,20 +207,35 @@ function renderStations() {
   const list = $("#stationsList");
   list.innerHTML = "";
   const empty = $("#stationsEmpty");
-  empty.classList.toggle("hidden", state.stations.length !== 0);
+  const merged = [];
 
-  state.stations.forEach((st, idx) => {
+  if (stationsFilter === "all" || stationsFilter === "public") {
+    publicStations.forEach((st) => merged.push({ ...st, _source: "public" }));
+  }
+  if (stationsFilter === "all" || stationsFilter === "mine") {
+    state.stations.forEach((st, mineIndex) => merged.push({ ...st, _source: "mine", _mineIndex: mineIndex }));
+  }
+
+  empty.classList.toggle("hidden", merged.length !== 0);
+
+  merged.forEach((st, idx) => {
     const item = document.createElement("div");
     item.className = "item";
     const meta = formatStationMeta(st);
     const maps = stationMapsLink(st);
+    const pill =
+      st._source === "public"
+        ? `<span class="pill pill--public">Pubblica</span>`
+        : `<span class="pill pill--mine">Mia</span>`;
+    const canEdit = st._source === "mine";
+
     item.innerHTML = `
-      <div class="item__title">${escapeHtml(st.name || `Punto ${idx + 1}`)}</div>
+      <div class="item__title">${escapeHtml(st.name || `Punto ${idx + 1}`)} ${pill}</div>
       <div class="item__meta">${escapeHtml(meta || "—")}</div>
       <div class="item__actions">
         ${maps ? `<a class="btn btn--primary" href="${escapeHtml(maps)}" target="_blank" rel="noopener noreferrer">Apri mappa</a>` : ""}
-        <button class="btn" data-edit="${idx}">Modifica</button>
-        <button class="btn btn--danger" data-del="${idx}">Elimina</button>
+        ${canEdit ? `<button class="btn" data-edit="${idx}">Modifica</button>` : ""}
+        ${canEdit ? `<button class="btn btn--danger" data-del="${idx}">Elimina</button>` : ""}
       </div>
     `;
     list.appendChild(item);
@@ -213,9 +245,11 @@ function renderStations() {
     btn.addEventListener("click", () => {
       const idx = Number(btn.dataset.del);
       if (!Number.isFinite(idx)) return;
-      state.stations.splice(idx, 1);
+      const mineIdx = merged[idx]?._mineIndex;
+      if (!Number.isFinite(mineIdx)) return;
+      state.stations.splice(mineIdx, 1);
       saveState(state);
-      if (editingStationIndex === idx) setStationEditing(null);
+      if (editingStationIndex === mineIdx) setStationEditing(null);
       renderStations();
     });
   });
@@ -224,9 +258,12 @@ function renderStations() {
     btn.addEventListener("click", () => {
       const idx = Number(btn.dataset.edit);
       if (!Number.isFinite(idx)) return;
-      const st = state.stations[idx];
+      const stMerged = merged[idx];
+      if (!stMerged || stMerged._source !== "mine") return;
+      const mineIdx = stMerged._mineIndex;
+      const st = state.stations[mineIdx];
       if (!st) return;
-      setStationEditing(idx);
+      setStationEditing(mineIdx);
       const form = $("#stationForm");
       form.elements.namedItem("name").value = st.name || "";
       form.elements.namedItem("area").value = st.area || "";
@@ -254,6 +291,31 @@ function initNav() {
 function initStations() {
   const cancelBtn = $("#btnStationCancel");
   setStationEditing(null);
+
+  const setFilter = (next) => {
+    stationsFilter = next;
+    $("#chipStationsAll").classList.toggle("chip--active", next === "all");
+    $("#chipStationsPublic").classList.toggle("chip--active", next === "public");
+    $("#chipStationsMine").classList.toggle("chip--active", next === "mine");
+    renderStations();
+  };
+
+  $("#chipStationsAll").addEventListener("click", () => setFilter("all"));
+  $("#chipStationsPublic").addEventListener("click", () => setFilter("public"));
+  $("#chipStationsMine").addEventListener("click", () => setFilter("mine"));
+
+  $("#btnStationsRefreshPublic").addEventListener("click", async () => {
+    const ok = await fetchPublicStations();
+    renderStations();
+    alert(ok ? "Colonnine pubbliche aggiornate." : "Non riesco ad aggiornare (serve connessione).");
+  });
+
+  const proposeUrl = `https://github.com/${PUBLIC_REPO.owner}/${PUBLIC_REPO.repo}/issues/new?title=${encodeURIComponent(
+    "Nuova colonnina (proposta)",
+  )}&body=${encodeURIComponent(
+    "Incolla qui i dati della colonnina (JSON) e un contatto/fonte:\\n\\n```json\\n{\\n  \\\"name\\\": \\\"\\\",\\n  \\\"area\\\": \\\"\\\",\\n  \\\"notes\\\": \\\"\\\",\\n  \\\"lat\\\": \\\"\\\",\\n  \\\"lon\\\": \\\"\\\",\\n  \\\"url\\\": \\\"\\\"\\n}\\n```\\n",
+  )}`;
+  $("#btnStationsPropose").href = proposeUrl;
 
   $("#stationForm").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -417,9 +479,12 @@ function boot() {
   initStations();
   initSettings();
 
+  fetchPublicStations().finally(() => {
+    renderStations();
+  });
+
   renderMaps();
   renderLinks();
-  renderStations();
   refreshSettingsEditors();
 
   const hash = (location.hash || "").replace(/^#/, "");
