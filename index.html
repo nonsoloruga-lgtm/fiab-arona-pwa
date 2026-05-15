@@ -24,7 +24,6 @@
       <header class="topbar">
         <div class="topbar__actions">
           <button class="iconbtn" id="btnShare" title="Condividi">↗</button>
-          <button class="iconbtn" id="btnExport" title="Esporta/Importa">⭳</button>
         </div>
 
         <div class="topbar__brand">
@@ -69,11 +68,6 @@
               <div class="cardbtn__icon">⚡</div>
               <div class="cardbtn__title">Colonnine</div>
               <div class="cardbtn__text">Aggiungi e consulta punti ricarica</div>
-            </button>
-            <button class="cardbtn" data-nav="settings">
-              <div class="cardbtn__icon">⚙️</div>
-              <div class="cardbtn__title">Impostazioni</div>
-              <div class="cardbtn__text">Personalizza mappe e link</div>
             </button>
           </div>
         </section>
@@ -162,48 +156,6 @@
           </div>
         </section>
 
-        <section id="view-settings" class="view">
-          <div class="sectionhead">
-            <div class="sectionhead__title">Impostazioni</div>
-            <div class="sectionhead__subtitle">Personalizza cosa mostrare nell’app. I dati restano sul dispositivo (localStorage).</div>
-          </div>
-
-          <div class="panel">
-            <div class="panel__title">Mappe (JSON)</div>
-            <div class="panel__hint">
-              Inserisci un array di oggetti: <code>{ "title": "...", "url": "...", "description": "...", "embedUrl": "..." }</code>. <code>embedUrl</code> è opzionale (iframe).
-            </div>
-            <textarea id="mapsJson" class="textarea" rows="10" spellcheck="false"></textarea>
-            <div class="row row--end">
-              <button class="btn" id="btnSaveMaps" type="button">Salva mappe</button>
-              <button class="btn btn--ghost" id="btnResetMaps" type="button">Ripristina</button>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel__title">Link (JSON)</div>
-            <div class="panel__hint">
-              Inserisci un array di oggetti: <code>{ "title": "...", "url": "...", "group": "FIAB" }</code>.
-            </div>
-            <textarea id="linksJson" class="textarea" rows="10" spellcheck="false"></textarea>
-            <div class="row row--end">
-              <button class="btn" id="btnSaveLinks" type="button">Salva link</button>
-              <button class="btn btn--ghost" id="btnResetLinks" type="button">Ripristina</button>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel__title">Dati (backup)</div>
-            <div class="panel__hint">Esporta/Importa tutte le impostazioni e colonnine in un file JSON.</div>
-            <div class="row">
-              <button class="btn" id="btnDownloadBackup" type="button">Esporta JSON</button>
-              <label class="filebtn">
-                Importa JSON
-                <input id="backupFile" type="file" accept="application/json" />
-              </label>
-            </div>
-          </div>
-        </section>
       </main>
 
       <nav class="tabbar">
@@ -222,10 +174,6 @@
         <button class="tab" data-nav="stations" aria-label="Colonnine">
           <span class="tab__icon">⚡</span>
           <span class="tab__label">Colonnine</span>
-        </button>
-        <button class="tab" data-nav="settings" aria-label="Impostazioni">
-          <span class="tab__icon">⚙️</span>
-          <span class="tab__label">Impostazioni</span>
         </button>
       </nav>
     </div>

@@ -69,6 +69,7 @@ function normalizeUrl(url) {
 }
 
 function navTo(view) {
+  if (view === "settings") view = "home";
   document.querySelectorAll(".view").forEach((v) => v.classList.remove("view--active"));
   $(`#view-${view}`).classList.add("view--active");
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("tab--active", t.dataset.nav === view));
@@ -279,11 +280,6 @@ function renderStations() {
   });
 }
 
-function refreshSettingsEditors() {
-  $("#mapsJson").value = JSON.stringify(state.maps, null, 2);
-  $("#linksJson").value = JSON.stringify(state.links, null, 2);
-}
-
 function initNav() {
   document.querySelectorAll("[data-nav]").forEach((el) => {
     el.addEventListener("click", () => navTo(el.dataset.nav));
@@ -376,67 +372,7 @@ function initStations() {
       } catch (_) {}
     }
     downloadJson("fiab-arona-colonnine.json", payload);
-    alert("File esportato. Puoi inviarlo su WhatsApp/email e importarlo da Impostazioni → Importa JSON.");
-  });
-}
-
-function initSettings() {
-  $("#btnSaveMaps").addEventListener("click", () => {
-    const parsed = safeJsonParse($("#mapsJson").value);
-    if (!parsed.ok || !Array.isArray(parsed.value)) return alert("JSON mappe non valido: deve essere un array.");
-    state.maps = parsed.value;
-    saveState(state);
-    renderMaps();
-    alert("Mappe salvate.");
-  });
-
-  $("#btnResetMaps").addEventListener("click", () => {
-    state.maps = clone(DEFAULT_STATE.maps);
-    saveState(state);
-    renderMaps();
-    refreshSettingsEditors();
-  });
-
-  $("#btnSaveLinks").addEventListener("click", () => {
-    const parsed = safeJsonParse($("#linksJson").value);
-    if (!parsed.ok || !Array.isArray(parsed.value)) return alert("JSON link non valido: deve essere un array.");
-    state.links = parsed.value;
-    saveState(state);
-    renderLinks();
-    alert("Link salvati.");
-  });
-
-  $("#btnResetLinks").addEventListener("click", () => {
-    state.links = clone(DEFAULT_STATE.links);
-    saveState(state);
-    renderLinks();
-    refreshSettingsEditors();
-  });
-
-  $("#btnDownloadBackup").addEventListener("click", () => {
-    downloadJson("fiab-arona-backup.json", { version: 1, exportedAt: new Date().toISOString(), state });
-  });
-
-  $("#backupFile").addEventListener("change", async (e) => {
-    const file = e.currentTarget.files && e.currentTarget.files[0];
-    if (!file) return;
-    const text = await file.text();
-    const parsed = safeJsonParse(text);
-    if (!parsed.ok || !parsed.value || typeof parsed.value !== "object") return alert("File non valido.");
-    const next = parsed.value.state || parsed.value;
-    if (!next || typeof next !== "object") return alert("File non valido.");
-    state = {
-      maps: Array.isArray(next.maps) ? next.maps : clone(DEFAULT_STATE.maps),
-      links: Array.isArray(next.links) ? next.links : clone(DEFAULT_STATE.links),
-      stations: Array.isArray(next.stations) ? next.stations : []
-    };
-    saveState(state);
-    renderMaps();
-    renderLinks();
-    renderStations();
-    refreshSettingsEditors();
-    alert("Import completato.");
-    e.currentTarget.value = "";
+    alert("File esportato. Puoi inviarlo su WhatsApp/email a chi gestisce l’elenco pubblico.");
   });
 }
 
@@ -452,8 +388,6 @@ function initTopbar() {
     await navigator.clipboard.writeText(url);
     alert("Link copiato negli appunti.");
   });
-
-  $("#btnExport").addEventListener("click", () => navTo("settings"));
 }
 
 function initServiceWorker() {
@@ -489,7 +423,6 @@ function boot() {
   initNav();
   initTopbar();
   initStations();
-  initSettings();
 
   fetchPublicStations().finally(() => {
     renderStations();
@@ -497,7 +430,6 @@ function boot() {
 
   renderMaps();
   renderLinks();
-  refreshSettingsEditors();
 
   const hash = (location.hash || "").replace(/^#/, "");
   if (hash && document.querySelector(`#view-${hash}`)) navTo(hash);
