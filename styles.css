@@ -1,12 +1,12 @@
 :root {
-  --bg: #0b1511;
-  --card: #0f211a;
-  --muted: #a7c6bb;
-  --text: #e8f5f0;
-  --accent: #29b07f;
-  --accent2: #1b6e5a;
-  --danger: #e56262;
-  --shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+  --bg: #ffffff;
+  --card: #ffffff;
+  --muted: #335b6c;
+  --text: #0b2a3a;
+  --accent: #006aa7; /* blu FIAB */
+  --accent2: #fcde4c; /* giallo FIAB */
+  --danger: #c73737;
+  --shadow: 0 14px 36px rgba(10, 38, 55, 0.12);
   --radius: 18px;
 }
 
@@ -22,8 +22,8 @@ body {
 body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: radial-gradient(1000px 700px at 20% -10%, rgba(41, 176, 127, 0.35), transparent 60%),
-    radial-gradient(900px 650px at 110% 10%, rgba(27, 110, 90, 0.35), transparent 55%),
+  background: radial-gradient(1000px 700px at 20% -10%, rgba(252, 222, 76, 0.55), transparent 58%),
+    radial-gradient(900px 650px at 110% 10%, rgba(0, 106, 167, 0.22), transparent 55%),
     var(--bg);
   color: var(--text);
 }
@@ -31,7 +31,7 @@ body {
 code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.92em;
-  color: #c8f1e2;
+  color: #0b2a3a;
 }
 
 .hidden {
@@ -50,6 +50,26 @@ code {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar__logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid rgba(11, 42, 58, 0.12);
+  background: rgba(252, 222, 76, 0.4);
+  box-shadow: 0 10px 22px rgba(10, 38, 55, 0.1);
+}
+
+.topbar__brandText {
+  display: flex;
+  flex-direction: column;
 }
 
 .topbar__title {
@@ -73,10 +93,10 @@ code {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(11, 42, 58, 0.14);
+  background: rgba(255, 255, 255, 0.8);
   color: var(--text);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 26px rgba(10, 38, 55, 0.12);
   cursor: pointer;
   font-size: 18px;
 }
@@ -95,8 +115,8 @@ code {
 }
 
 .hero {
-  background: linear-gradient(135deg, rgba(41, 176, 127, 0.22), rgba(27, 110, 90, 0.12));
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, rgba(252, 222, 76, 0.55), rgba(0, 106, 167, 0.12));
+  border: 1px solid rgba(11, 42, 58, 0.12);
   border-radius: var(--radius);
   padding: 14px 14px;
   box-shadow: var(--shadow);
@@ -123,8 +143,8 @@ code {
 
 .cardbtn {
   text-align: left;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(15, 33, 26, 0.8);
+  border: 1px solid rgba(11, 42, 58, 0.12);
+  background: rgba(255, 255, 255, 0.86);
   border-radius: var(--radius);
   padding: 12px 12px;
   cursor: pointer;
@@ -171,8 +191,8 @@ code {
 }
 
 .item {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(15, 33, 26, 0.8);
+  border: 1px solid rgba(11, 42, 58, 0.12);
+  background: rgba(255, 255, 255, 0.86);
   border-radius: var(--radius);
   padding: 12px 12px;
   box-shadow: var(--shadow);
@@ -198,8 +218,8 @@ code {
 }
 
 .btn {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(11, 42, 58, 0.14);
+  background: rgba(255, 255, 255, 0.9);
   color: var(--text);
   padding: 10px 12px;
   border-radius: 14px;
@@ -213,14 +233,15 @@ code {
 }
 
 .btn--danger {
-  border-color: rgba(229, 98, 98, 0.35);
-  background: rgba(229, 98, 98, 0.12);
-  color: #ffd4d4;
+  border-color: rgba(199, 55, 55, 0.35);
+  background: rgba(199, 55, 55, 0.10);
+  color: #8a0f0f;
 }
 
 .btn--primary {
-  border-color: rgba(41, 176, 127, 0.35);
-  background: rgba(41, 176, 127, 0.18);
+  border-color: rgba(0, 106, 167, 0.35);
+  background: rgba(0, 106, 167, 0.12);
+  color: #053a58;
 }
 
 .tabbar {
@@ -232,14 +253,14 @@ code {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 8px;
-  background: rgba(11, 21, 17, 0.82);
+  background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(14px);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(11, 42, 58, 0.08);
 }
 
 .tab {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(11, 42, 58, 0.10);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 16px;
   padding: 10px 8px;
   color: var(--text);
@@ -251,8 +272,8 @@ code {
 }
 
 .tab--active {
-  border-color: rgba(41, 176, 127, 0.4);
-  background: rgba(41, 176, 127, 0.14);
+  border-color: rgba(0, 106, 167, 0.35);
+  background: rgba(252, 222, 76, 0.65);
 }
 
 .tab__icon {
@@ -270,7 +291,7 @@ code {
 
 .empty {
   margin-top: 14px;
-  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border: 1px dashed rgba(11, 42, 58, 0.22);
   border-radius: var(--radius);
   padding: 14px;
   color: var(--muted);
@@ -288,8 +309,8 @@ code {
 }
 
 .form {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(15, 33, 26, 0.55);
+  border: 1px solid rgba(11, 42, 58, 0.12);
+  background: rgba(255, 255, 255, 0.72);
   border-radius: var(--radius);
   padding: 12px;
   box-shadow: var(--shadow);
@@ -321,8 +342,8 @@ code {
 .textarea {
   width: 100%;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(11, 42, 58, 0.14);
+  background: rgba(255, 255, 255, 0.92);
   color: var(--text);
   padding: 10px 12px;
   outline: none;
@@ -334,8 +355,8 @@ code {
 }
 
 .panel {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(15, 33, 26, 0.55);
+  border: 1px solid rgba(11, 42, 58, 0.12);
+  background: rgba(255, 255, 255, 0.72);
   border-radius: var(--radius);
   padding: 12px;
   box-shadow: var(--shadow);
@@ -360,8 +381,8 @@ code {
   justify-content: center;
   padding: 10px 12px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(11, 42, 58, 0.14);
+  background: rgba(255, 255, 255, 0.9);
   color: var(--text);
   font-weight: 750;
   font-size: 13px;

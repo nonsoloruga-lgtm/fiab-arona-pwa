@@ -1,6 +1,18 @@
-const CACHE_NAME = "fiab-arona-pwa-v1";
+const CACHE_NAME = "fiab-arona-pwa-v2";
 
-const CORE_ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png"];
+const CORE_ASSETS = [
+  "./",
+  "./index.html",
+  "./styles.css",
+  "./app.js",
+  "./manifest.webmanifest",
+  "./assets/logo.png",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
+  "./icons/apple-touch-icon.png",
+  "./icons/icon-167.png",
+  "./icons/icon-152.png"
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
