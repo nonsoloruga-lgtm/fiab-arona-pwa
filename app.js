@@ -104,6 +104,15 @@ function stationMapsLink(st) {
 }
 
 let state = loadState();
+let editingStationIndex = null;
+
+function setStationEditing(idx) {
+  editingStationIndex = typeof idx === "number" ? idx : null;
+  const submitBtn = document.querySelector("#btnStationSubmit");
+  const cancelBtn = document.querySelector("#btnStationCancel");
+  if (submitBtn) submitBtn.textContent = editingStationIndex === null ? "Aggiungi" : "Salva modifiche";
+  if (cancelBtn) cancelBtn.classList.toggle("hidden", editingStationIndex === null);
+}
 
 function renderMaps() {
   const list = $("#mapsList");
@@ -193,6 +202,7 @@ function renderStations() {
       <div class="item__meta">${escapeHtml(meta || "—")}</div>
       <div class="item__actions">
         ${maps ? `<a class="btn btn--primary" href="${escapeHtml(maps)}" target="_blank" rel="noopener noreferrer">Apri mappa</a>` : ""}
+        <button class="btn" data-edit="${idx}">Modifica</button>
         <button class="btn btn--danger" data-del="${idx}">Elimina</button>
       </div>
     `;
@@ -205,7 +215,27 @@ function renderStations() {
       if (!Number.isFinite(idx)) return;
       state.stations.splice(idx, 1);
       saveState(state);
+      if (editingStationIndex === idx) setStationEditing(null);
       renderStations();
+    });
+  });
+
+  list.querySelectorAll("button[data-edit]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.edit);
+      if (!Number.isFinite(idx)) return;
+      const st = state.stations[idx];
+      if (!st) return;
+      setStationEditing(idx);
+      const form = $("#stationForm");
+      form.elements.namedItem("name").value = st.name || "";
+      form.elements.namedItem("area").value = st.area || "";
+      form.elements.namedItem("notes").value = st.notes || "";
+      form.elements.namedItem("lat").value = st.lat || "";
+      form.elements.namedItem("lon").value = st.lon || "";
+      form.elements.namedItem("url").value = st.url || "";
+      navTo("stations");
+      form.elements.namedItem("name").focus();
     });
   });
 }
@@ -222,6 +252,9 @@ function initNav() {
 }
 
 function initStations() {
+  const cancelBtn = $("#btnStationCancel");
+  setStationEditing(null);
+
   $("#stationForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
@@ -235,17 +268,41 @@ function initStations() {
       lon: String(fd.get("lon") || "").trim(),
       url: String(fd.get("url") || "").trim()
     };
-    state.stations.unshift(st);
+    if (editingStationIndex !== null && state.stations[editingStationIndex]) {
+      state.stations[editingStationIndex] = st;
+      setStationEditing(null);
+    } else {
+      state.stations.unshift(st);
+    }
     saveState(state);
     e.currentTarget.reset();
     renderStations();
   });
 
+  cancelBtn.addEventListener("click", () => {
+    setStationEditing(null);
+    $("#stationForm").reset();
+  });
+
   $("#btnStationsClear").addEventListener("click", () => {
     if (!confirm("Vuoi davvero svuotare la lista colonnine su questo dispositivo?")) return;
     state.stations = [];
+    setStationEditing(null);
     saveState(state);
     renderStations();
+  });
+
+  $("#btnStationsExport").addEventListener("click", async () => {
+    const payload = { version: 1, exportedAt: new Date().toISOString(), stations: state.stations };
+    if (navigator.share) {
+      try {
+        const file = new File([JSON.stringify(payload, null, 2)], "fiab-arona-colonnine.json", { type: "application/json" });
+        await navigator.share({ title: "Colonnine FIAB Arona", files: [file] });
+        return;
+      } catch (_) {}
+    }
+    downloadJson("fiab-arona-colonnine.json", payload);
+    alert("File esportato. Puoi inviarlo su WhatsApp/email e importarlo da Impostazioni → Importa JSON.");
   });
 }
 
