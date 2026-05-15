@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1b6e5a" />
+
+    <!-- iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="FIAB Arona" />
+
+    <title>FIAB Arona · Felici in Bici</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="./icons/icon-167.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152.png" />
+
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="topbar__brand">
+          <div class="topbar__title">FIAB Arona</div>
+          <div class="topbar__subtitle">Felici in Bici · Utility</div>
+        </div>
+        <div class="topbar__actions">
+          <button class="iconbtn" id="btnShare" title="Condividi">↗</button>
+          <button class="iconbtn" id="btnExport" title="Esporta/Importa">⭳</button>
+        </div>
+      </header>
+
+      <main class="main">
+        <section id="view-home" class="view view--active">
+          <div class="hero">
+            <div class="hero__title">Una sola app, tutto a portata di mano.</div>
+            <div class="hero__text">Mappe, link utili e colonnine ricaricabili. Funziona anche offline (per i contenuti già aperti).</div>
+          </div>
+
+          <div class="grid">
+            <button class="cardbtn" data-nav="maps">
+              <div class="cardbtn__icon">🗺️</div>
+              <div class="cardbtn__title">Mappe</div>
+              <div class="cardbtn__text">Apri mappe (QGIS / embed / link)</div>
+            </button>
+            <button class="cardbtn" data-nav="links">
+              <div class="cardbtn__icon">🔗</div>
+              <div class="cardbtn__title">Link</div>
+              <div class="cardbtn__text">FIAB, Albergabici, Bicitalia…</div>
+            </button>
+            <button class="cardbtn" data-nav="stations">
+              <div class="cardbtn__icon">⚡</div>
+              <div class="cardbtn__title">Colonnine</div>
+              <div class="cardbtn__text">Aggiungi e consulta punti ricarica</div>
+            </button>
+            <button class="cardbtn" data-nav="settings">
+              <div class="cardbtn__icon">⚙️</div>
+              <div class="cardbtn__title">Impostazioni</div>
+              <div class="cardbtn__text">Personalizza mappe e link</div>
+            </button>
+          </div>
+        </section>
+
+        <section id="view-maps" class="view">
+          <div class="sectionhead">
+            <div class="sectionhead__title">Mappe</div>
+            <div class="sectionhead__subtitle">Apri mappe esterne o embed (QGIS/qgis2web, Google MyMaps, uMap, ecc.).</div>
+          </div>
+          <div id="mapsList" class="list"></div>
+          <div id="mapsEmpty" class="empty hidden">
+            <div class="empty__title">Nessuna mappa configurata.</div>
+            <div class="empty__hint">Vai su “Impostazioni” e aggiungi i link/iframe.</div>
+          </div>
+        </section>
+
+        <section id="view-links" class="view">
+          <div class="sectionhead">
+            <div class="sectionhead__title">Link utili</div>
+            <div class="sectionhead__subtitle">Raccolta rapida di risorse FIAB e ciclovie.</div>
+          </div>
+          <div id="linksList" class="list"></div>
+          <div id="linksEmpty" class="empty hidden">
+            <div class="empty__title">Nessun link configurato.</div>
+            <div class="empty__hint">Vai su “Impostazioni” e aggiungi i link.</div>
+          </div>
+        </section>
+
+        <section id="view-stations" class="view">
+          <div class="sectionhead">
+            <div class="sectionhead__title">Colonnine ricaricabili</div>
+            <div class="sectionhead__subtitle">Inserisci punti di ricarica (e-bike / power bank / prese) e condividi l’elenco.</div>
+          </div>
+
+          <form id="stationForm" class="form">
+            <div class="row">
+              <label class="field">
+                <div class="field__label">Nome</div>
+                <input class="input" name="name" autocomplete="off" required placeholder="Es. Stazione Arona" />
+              </label>
+              <label class="field">
+                <div class="field__label">Comune/Zona</div>
+                <input class="input" name="area" autocomplete="off" placeholder="Es. Arona" />
+              </label>
+            </div>
+            <label class="field">
+              <div class="field__label">Indirizzo / Note</div>
+              <input class="input" name="notes" autocomplete="off" placeholder="Es. vicino al Municipio, presa Schuko…" />
+            </label>
+            <div class="row">
+              <label class="field">
+                <div class="field__label">Lat</div>
+                <input class="input" name="lat" inputmode="decimal" placeholder="45.7" />
+              </label>
+              <label class="field">
+                <div class="field__label">Lon</div>
+                <input class="input" name="lon" inputmode="decimal" placeholder="8.5" />
+              </label>
+              <label class="field">
+                <div class="field__label">Link</div>
+                <input class="input" name="url" inputmode="url" placeholder="https://…" />
+              </label>
+            </div>
+            <div class="row row--end">
+              <button class="btn" type="submit">Aggiungi</button>
+              <button class="btn btn--ghost" id="btnStationsClear" type="button">Svuota</button>
+            </div>
+          </form>
+
+          <div id="stationsList" class="list"></div>
+          <div id="stationsEmpty" class="empty hidden">
+            <div class="empty__title">Nessun punto inserito.</div>
+            <div class="empty__hint">Compila il form qui sopra per aggiungere il primo.</div>
+          </div>
+        </section>
+
+        <section id="view-settings" class="view">
+          <div class="sectionhead">
+            <div class="sectionhead__title">Impostazioni</div>
+            <div class="sectionhead__subtitle">Personalizza cosa mostrare nell’app. I dati restano sul dispositivo (localStorage).</div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__title">Mappe (JSON)</div>
+            <div class="panel__hint">
+              Inserisci un array di oggetti: <code>{ "title": "...", "url": "...", "description": "...", "embedUrl": "..." }</code>. <code>embedUrl</code> è opzionale (iframe).
+            </div>
+            <textarea id="mapsJson" class="textarea" rows="10" spellcheck="false"></textarea>
+            <div class="row row--end">
+              <button class="btn" id="btnSaveMaps" type="button">Salva mappe</button>
+              <button class="btn btn--ghost" id="btnResetMaps" type="button">Ripristina</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__title">Link (JSON)</div>
+            <div class="panel__hint">
+              Inserisci un array di oggetti: <code>{ "title": "...", "url": "...", "group": "FIAB" }</code>.
+            </div>
+            <textarea id="linksJson" class="textarea" rows="10" spellcheck="false"></textarea>
+            <div class="row row--end">
+              <button class="btn" id="btnSaveLinks" type="button">Salva link</button>
+              <button class="btn btn--ghost" id="btnResetLinks" type="button">Ripristina</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__title">Dati (backup)</div>
+            <div class="panel__hint">Esporta/Importa tutte le impostazioni e colonnine in un file JSON.</div>
+            <div class="row">
+              <button class="btn" id="btnDownloadBackup" type="button">Esporta JSON</button>
+              <label class="filebtn">
+                Importa JSON
+                <input id="backupFile" type="file" accept="application/json" />
+              </label>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <nav class="tabbar">
+        <button class="tab tab--active" data-nav="home" aria-label="Home">
+          <span class="tab__icon">🏠</span>
+          <span class="tab__label">Home</span>
+        </button>
+        <button class="tab" data-nav="maps" aria-label="Mappe">
+          <span class="tab__icon">🗺️</span>
+          <span class="tab__label">Mappe</span>
+        </button>
+        <button class="tab" data-nav="links" aria-label="Link">
+          <span class="tab__icon">🔗</span>
+          <span class="tab__label">Link</span>
+        </button>
+        <button class="tab" data-nav="stations" aria-label="Colonnine">
+          <span class="tab__icon">⚡</span>
+          <span class="tab__label">Colonnine</span>
+        </button>
+        <button class="tab" data-nav="settings" aria-label="Impostazioni">
+          <span class="tab__icon">⚙️</span>
+          <span class="tab__label">Impostazioni</span>
+        </button>
+      </nav>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
