@@ -109,50 +109,65 @@
             <button class="chip" id="chipStationsPublic" type="button">Pubbliche</button>
             <button class="chip" id="chipStationsMine" type="button">Mie</button>
             <button class="chip chip--accent" id="btnStationsRefreshPublic" type="button">Aggiorna pubbliche</button>
-            <a class="chip chip--ghost" id="btnStationsPropose" href="#" rel="noopener noreferrer">Proponi via email</a>
+            <button class="chip chip--ghost" id="btnStationsPropose" type="button">Proponi via mail o condividi la posizione</button>
           </div>
 
-          <form id="stationForm" class="form">
-            <div class="row">
+          <div id="stationsFormWrap">
+            <form id="stationForm" class="form">
+              <div class="row">
+                <label class="field">
+                  <div class="field__label">Nome</div>
+                  <input class="input" name="name" autocomplete="off" required placeholder="Es. Stazione Arona" />
+                </label>
+                <label class="field">
+                  <div class="field__label">Comune/Zona</div>
+                  <input class="input" name="area" autocomplete="off" placeholder="Es. Arona" />
+                </label>
+              </div>
               <label class="field">
-                <div class="field__label">Nome</div>
-                <input class="input" name="name" autocomplete="off" required placeholder="Es. Stazione Arona" />
+                <div class="field__label">Indirizzo / Note</div>
+                <input class="input" name="notes" autocomplete="off" placeholder="Es. vicino al Municipio, presa Schuko…" />
               </label>
-              <label class="field">
-                <div class="field__label">Comune/Zona</div>
-                <input class="input" name="area" autocomplete="off" placeholder="Es. Arona" />
-              </label>
-            </div>
-            <label class="field">
-              <div class="field__label">Indirizzo / Note</div>
-              <input class="input" name="notes" autocomplete="off" placeholder="Es. vicino al Municipio, presa Schuko…" />
-            </label>
-            <div class="row">
-              <label class="field">
-                <div class="field__label">Lat</div>
-                <input class="input" name="lat" inputmode="decimal" placeholder="45.7" />
-              </label>
-              <label class="field">
-                <div class="field__label">Lon</div>
-                <input class="input" name="lon" inputmode="decimal" placeholder="8.5" />
-              </label>
-              <label class="field">
-                <div class="field__label">Link</div>
-                <input class="input" name="url" inputmode="url" placeholder="https://…" />
-              </label>
-            </div>
-            <div class="row row--end">
-              <button class="btn btn--primary" id="btnStationSubmit" type="submit">Aggiungi</button>
-              <button class="btn btn--ghost hidden" id="btnStationCancel" type="button">Annulla</button>
-              <button class="btn" id="btnStationsExport" type="button">Condividi elenco</button>
-              <button class="btn btn--ghost" id="btnStationsClear" type="button">Svuota</button>
-            </div>
-          </form>
+              <div class="row">
+                <label class="field">
+                  <div class="field__label">Lat</div>
+                  <input class="input" name="lat" inputmode="decimal" placeholder="45.7" />
+                </label>
+                <label class="field">
+                  <div class="field__label">Lon</div>
+                  <input class="input" name="lon" inputmode="decimal" placeholder="8.5" />
+                </label>
+                <label class="field">
+                  <div class="field__label">Link</div>
+                  <input class="input" name="url" inputmode="url" placeholder="https://…" />
+                </label>
+              </div>
+              <div class="row row--end">
+                <button class="btn btn--primary" id="btnStationSubmit" type="submit">Aggiungi</button>
+                <button class="btn btn--ghost hidden" id="btnStationCancel" type="button">Annulla</button>
+                <button class="btn" id="btnStationsExport" type="button">Condividi elenco</button>
+                <button class="btn btn--ghost" id="btnStationsClear" type="button">Svuota</button>
+              </div>
+            </form>
+          </div>
 
           <div id="stationsList" class="list"></div>
           <div id="stationsEmpty" class="empty hidden">
             <div class="empty__title">Nessun punto inserito.</div>
             <div class="empty__hint">Compila il form qui sopra per aggiungere il primo.</div>
+          </div>
+
+          <div class="modal hidden" id="proposalModal" role="dialog" aria-modal="true" aria-labelledby="proposalTitle">
+            <div class="modal__backdrop" data-close="1"></div>
+            <div class="modal__panel">
+              <div class="modal__title" id="proposalTitle">Proponi una colonnina</div>
+              <div class="modal__text">Puoi inviare una mail precompilata oppure condividere la tua posizione (per indicare un punto).</div>
+              <div class="modal__actions">
+                <button class="btn btn--primary" id="btnProposalEmail" type="button">Invia mail</button>
+                <button class="btn" id="btnProposalLocation" type="button">Condividi posizione</button>
+                <button class="btn btn--ghost" id="btnProposalClose" type="button">Chiudi</button>
+              </div>
+            </div>
           </div>
         </section>
 

@@ -295,6 +295,7 @@ function initStations() {
     $("#chipStationsAll").classList.toggle("chip--active", next === "all");
     $("#chipStationsPublic").classList.toggle("chip--active", next === "public");
     $("#chipStationsMine").classList.toggle("chip--active", next === "mine");
+    $("#stationsFormWrap").classList.toggle("hidden", next !== "mine");
     renderStations();
   };
 
@@ -308,10 +309,21 @@ function initStations() {
     alert(ok ? "Colonnine pubbliche aggiornate." : "Non riesco ad aggiornare (serve connessione).");
   });
 
-  const proposeLink = $("#btnStationsPropose");
+  const proposeBtn = $("#btnStationsPropose");
+  const proposalModal = $("#proposalModal");
+  const closeModal = () => proposalModal.classList.add("hidden");
+  const openModal = () => proposalModal.classList.remove("hidden");
+
   if (!PROPOSAL_EMAIL) {
-    proposeLink.classList.add("hidden");
+    proposeBtn.classList.add("hidden");
   } else {
+    proposeBtn.addEventListener("click", () => openModal());
+  }
+
+  $("#btnProposalClose").addEventListener("click", closeModal);
+  proposalModal.querySelectorAll("[data-close]").forEach((el) => el.addEventListener("click", closeModal));
+
+  const mailtoHref = (() => {
     const subject = "Proposta colonnina FIAB Arona";
     const body =
       "Ciao! Vorrei proporre una colonnina/punto ricarica per l’elenco pubblico.%0D%0A%0D%0A" +
@@ -322,8 +334,40 @@ function initStations() {
       "Lon:%0D%0A" +
       "Link (opzionale):%0D%0A%0D%0A" +
       "Grazie!";
-    proposeLink.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${body}`;
-  }
+    return `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${body}`;
+  })();
+
+  $("#btnProposalEmail").addEventListener("click", () => {
+    closeModal();
+    location.href = mailtoHref;
+  });
+
+  $("#btnProposalLocation").addEventListener("click", () => {
+    closeModal();
+    if (!navigator.geolocation) return alert("Geolocalizzazione non supportata dal browser.");
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = String(pos.coords.latitude.toFixed(6));
+        const lon = String(pos.coords.longitude.toFixed(6));
+        const mapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
+        const text = `Proposta colonnina FIAB Arona — posizione: ${lat}, ${lon}`;
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: "Posizione colonnina", text, url: mapsUrl });
+            return;
+          } catch (_) {}
+        }
+        try {
+          await navigator.clipboard.writeText(`${text}\n${mapsUrl}`);
+          alert("Posizione copiata negli appunti.");
+        } catch (_) {
+          alert(mapsUrl);
+        }
+      },
+      () => alert("Non riesco a leggere la posizione. Controlla i permessi del browser."),
+      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+    );
+  });
 
   $("#stationForm").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -374,6 +418,9 @@ function initStations() {
     downloadJson("fiab-arona-colonnine.json", payload);
     alert("File esportato. Puoi inviarlo su WhatsApp/email a chi gestisce l’elenco pubblico.");
   });
+
+  // Default: show list-first, insertion only under "Mie".
+  setFilter("all");
 }
 
 function initTopbar() {
