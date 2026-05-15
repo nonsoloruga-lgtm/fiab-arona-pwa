@@ -1,6 +1,14 @@
 {
   "version": 1,
   "updatedAt": "2026-05-15",
-  "stations": []
+  "stations": [
+    {
+      "name": "Arona",
+      "area": "Arona lungolago",
+      "notes": "da parte all'ufficio del turismo di fronte alla stazione ferroviaria",
+      "lat": "45.756380",
+      "lon": "8.560327",
+      "url": "https://maps.app.goo.gl/aB4nXdEwoqwJo3px6"
+    }
+  ]
 }
-
