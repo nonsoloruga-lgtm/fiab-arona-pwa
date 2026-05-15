@@ -2,7 +2,7 @@ const STORAGE_KEY = "fiab_arona_pwa_state_v1";
 const PUBLIC_STATIONS_URL = "./public-stations.json";
 // Email to receive proposals (admins will then add to public-stations.json).
 // Leave empty to hide the "Proponi" button.
-const PROPOSAL_EMAIL = "";
+const PROPOSAL_EMAIL = "soloruga@libero.it";
 
 const clone = (value) => {
   if (typeof structuredClone === "function") return structuredClone(value);
