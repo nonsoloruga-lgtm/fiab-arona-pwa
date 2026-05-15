@@ -1,6 +1,8 @@
 const STORAGE_KEY = "fiab_arona_pwa_state_v1";
 const PUBLIC_STATIONS_URL = "./public-stations.json";
-const PUBLIC_REPO = { owner: "nonsoloruga-lgtm", repo: "fiab-arona-pwa" };
+// Email to receive proposals (admins will then add to public-stations.json).
+// Leave empty to hide the "Proponi" button.
+const PROPOSAL_EMAIL = "";
 
 const clone = (value) => {
   if (typeof structuredClone === "function") return structuredClone(value);
@@ -310,10 +312,22 @@ function initStations() {
     alert(ok ? "Colonnine pubbliche aggiornate." : "Non riesco ad aggiornare (serve connessione).");
   });
 
-  const proposeUrl = `https://github.com/${PUBLIC_REPO.owner}/${PUBLIC_REPO.repo}/issues/new?title=${encodeURIComponent(
-    "Nuova colonnina (proposta)",
-  )}&template=colonnina.yml`;
-  $("#btnStationsPropose").href = proposeUrl;
+  const proposeLink = $("#btnStationsPropose");
+  if (!PROPOSAL_EMAIL) {
+    proposeLink.classList.add("hidden");
+  } else {
+    const subject = "Proposta colonnina FIAB Arona";
+    const body =
+      "Ciao! Vorrei proporre una colonnina/punto ricarica per l’elenco pubblico.%0D%0A%0D%0A" +
+      "Nome:%0D%0A" +
+      "Comune/Zona:%0D%0A" +
+      "Indirizzo/Note:%0D%0A" +
+      "Lat:%0D%0A" +
+      "Lon:%0D%0A" +
+      "Link (opzionale):%0D%0A%0D%0A" +
+      "Grazie!";
+    proposeLink.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${body}`;
+  }
 
   $("#stationForm").addEventListener("submit", (e) => {
     e.preventDefault();
