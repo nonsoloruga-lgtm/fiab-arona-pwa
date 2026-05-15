@@ -312,9 +312,7 @@ function initStations() {
 
   const proposeUrl = `https://github.com/${PUBLIC_REPO.owner}/${PUBLIC_REPO.repo}/issues/new?title=${encodeURIComponent(
     "Nuova colonnina (proposta)",
-  )}&body=${encodeURIComponent(
-    "Incolla qui i dati della colonnina (JSON) e un contatto/fonte:\\n\\n```json\\n{\\n  \\\"name\\\": \\\"\\\",\\n  \\\"area\\\": \\\"\\\",\\n  \\\"notes\\\": \\\"\\\",\\n  \\\"lat\\\": \\\"\\\",\\n  \\\"lon\\\": \\\"\\\",\\n  \\\"url\\\": \\\"\\\"\\n}\\n```\\n",
-  )}`;
+  )}&template=colonnina.yml`;
   $("#btnStationsPropose").href = proposeUrl;
 
   $("#stationForm").addEventListener("submit", (e) => {

@@ -1,0 +1,79 @@
+name: "Proposta colonnina"
+description: "Invia una proposta di nuova colonnina/punto ricarica per l’elenco pubblico."
+title: "[Colonnina] "
+labels: ["colonnine", "proposta"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Grazie per la proposta! Compila i campi qui sotto.
+        Dopo la verifica, la colonnina verrà inserita in `public-stations.json` e sarà visibile a tutti nella PWA.
+
+  - type: input
+    id: name
+    attributes:
+      label: Nome
+      description: "Es. Stazione Arona / Municipio / Bar XYZ"
+      placeholder: "Nome del punto"
+    validations:
+      required: true
+
+  - type: input
+    id: area
+    attributes:
+      label: Comune/Zona
+      placeholder: "Es. Arona"
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Indirizzo / Note
+      description: "Indirizzo, come trovarla, tipo presa (Schuko/USB), eventuali vincoli (consumazione, orari), ecc."
+      placeholder: "Scrivi qui i dettagli utili…"
+    validations:
+      required: false
+
+  - type: input
+    id: lat
+    attributes:
+      label: Latitudine (Lat)
+      placeholder: "45.756380"
+    validations:
+      required: false
+
+  - type: input
+    id: lon
+    attributes:
+      label: Longitudine (Lon)
+      placeholder: "8.560327"
+    validations:
+      required: false
+
+  - type: input
+    id: url
+    attributes:
+      label: Link (opzionale)
+      description: "Sito del luogo, Google Maps, pagina informativa, ecc."
+      placeholder: "https://…"
+    validations:
+      required: false
+
+  - type: input
+    id: source
+    attributes:
+      label: Fonte/contatto (opzionale)
+      description: "Da dove arriva l’informazione (nome referente, sito, telefono, ecc.)."
+      placeholder: "Es. segnalato da … / sito …"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: check
+    attributes:
+      label: Conferma
+      options:
+        - label: "Confermo che le informazioni sono corrette al meglio delle mie conoscenze."
+          required: true
+
