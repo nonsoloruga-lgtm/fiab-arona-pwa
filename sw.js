@@ -1,10 +1,11 @@
-const CACHE_NAME = "fiab-arona-pwa-v3";
+const CACHE_NAME = "fiab-arona-pwa-v4";
+const BUILD = "2026-05-19-1";
 
 const CORE_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js",
+  `./styles.css?v=${BUILD}`,
+  `./app.js?v=${BUILD}`,
   "./manifest.webmanifest",
   "./assets/logo.png",
   "./icons/icon-192.png",
@@ -36,6 +37,9 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
 
+  const url = new URL(request.url);
+  const isSameOrigin = url.origin === self.location.origin;
+
   // Navigations: prefer network to get updates; fallback to cached shell.
   if (request.mode === "navigate") {
     event.respondWith(
@@ -50,7 +54,21 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Assets/API: stale-while-revalidate.
+  // Same-origin static assets: network-first so updates appear immediately on refresh.
+  if (isSameOrigin) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => {});
+          return response;
+        })
+        .catch(() => caches.match(request)),
+    );
+    return;
+  }
+
+  // Cross-origin: stale-while-revalidate.
   event.respondWith(
     caches.match(request).then((cached) => {
       const networkFetch = fetch(request)

@@ -17,7 +17,8 @@
     <link rel="apple-touch-icon" sizes="167x167" href="./icons/icon-167.png" />
     <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152.png" />
 
-    <link rel="stylesheet" href="./styles.css" />
+    <!-- Cache-bust to avoid stale updates on PWA/SW -->
+    <link rel="stylesheet" href="./styles.css?v=2026-05-19-1" />
   </head>
   <body>
     <div id="app">
@@ -193,6 +194,6 @@
       </nav>
     </div>
 
-    <script type="module" src="./app.js"></script>
+    <script type="module" src="./app.js?v=2026-05-19-1"></script>
   </body>
 </html>
