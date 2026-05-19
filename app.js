@@ -623,6 +623,61 @@ function initTopbar() {
   });
 }
 
+function isStandaloneMode() {
+  return window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone === true;
+}
+
+function isIos() {
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+function initInstallUi() {
+  const btnInstall = document.querySelector("#btnInstall");
+  const installModal = document.querySelector("#installModal");
+  const btnInstallClose = document.querySelector("#btnInstallClose");
+  const btnInstallNow = document.querySelector("#btnInstallNow");
+
+  if (!btnInstall || !installModal || !btnInstallClose || !btnInstallNow) return;
+  if (isStandaloneMode()) return;
+
+  let deferredPrompt = null;
+
+  const open = () => installModal.classList.remove("hidden");
+  const close = () => installModal.classList.add("hidden");
+
+  btnInstallClose.addEventListener("click", close);
+  installModal.querySelectorAll("[data-close='install']").forEach((el) => el.addEventListener("click", close));
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    btnInstall.classList.remove("hidden");
+    btnInstallNow.classList.remove("hidden");
+  });
+
+  btnInstall.addEventListener("click", () => {
+    // If we have the native prompt (Android/Chrome), show it; otherwise show instructions (iOS).
+    open();
+  });
+
+  btnInstallNow.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    close();
+    deferredPrompt.prompt();
+    try {
+      await deferredPrompt.userChoice;
+    } catch (_) {}
+    deferredPrompt = null;
+    btnInstallNow.classList.add("hidden");
+  });
+
+  // iOS: show instructions button even without native prompt.
+  if (isIos()) {
+    btnInstall.classList.remove("hidden");
+  }
+}
+
 function initServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
   navigator.serviceWorker
@@ -655,6 +710,7 @@ function boot() {
   initServiceWorker();
   initNav();
   initTopbar();
+  initInstallUi();
   initStations();
 
   fetchPublicStations().finally(() => {

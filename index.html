@@ -29,6 +29,7 @@
       <header class="topbar">
         <div class="topbar__actions">
           <button class="iconbtn" id="btnShare" title="Condividi">↗</button>
+          <button class="iconbtn hidden" id="btnInstall" title="Installa app">⬇</button>
         </div>
 
         <div class="topbar__brand">
@@ -232,6 +233,22 @@
           <span class="tab__label">Punto ricarica</span>
         </button>
       </nav>
+    </div>
+
+    <div class="modal hidden" id="installModal" role="dialog" aria-modal="true" aria-labelledby="installTitle">
+      <div class="modal__backdrop" data-close="install"></div>
+      <div class="modal__panel">
+        <div class="modal__title" id="installTitle">Installa la PWA</div>
+        <div class="modal__text" id="installText">
+          Su iPhone/iPad: premi <b>Condividi</b> (icona quadrato con freccia) e poi <b>Aggiungi a schermata Home</b>.
+          <br /><br />
+          Su Android/Chrome: tocca <b>Installa app</b> quando compare la richiesta (o dal menu ⋮).
+        </div>
+        <div class="modal__actions">
+          <button class="btn btn--primary hidden" id="btnInstallNow" type="button">Installa ora</button>
+          <button class="btn btn--ghost" id="btnInstallClose" type="button">Chiudi</button>
+        </div>
+      </div>
     </div>
 
     <script type="module" src="./app.js?v=2026-05-19-1"></script>
