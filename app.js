@@ -157,6 +157,7 @@ let state = loadState();
 let editingStationIndex = null;
 let publicStations = [];
 let stationsFilter = "all"; // all | public | mine
+let stationsQuery = "";
 
 function setStationEditing(idx) {
   editingStationIndex = typeof idx === "number" ? idx : null;
@@ -271,9 +272,19 @@ function renderStations() {
     state.stations.forEach((st, mineIndex) => merged.push({ ...st, _source: "mine", _mineIndex: mineIndex }));
   }
 
-  empty.classList.toggle("hidden", merged.length !== 0);
+  // Filter by search query and sort alphabetically by name.
+  const q = stationsQuery.trim().toLocaleLowerCase("it");
+  const filtered = merged
+    .filter((st) => {
+      if (!q) return true;
+      const name = String(st.name || "").toLocaleLowerCase("it");
+      return name.includes(q);
+    })
+    .sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "it", { sensitivity: "base" }));
 
-  merged.forEach((st, idx) => {
+  empty.classList.toggle("hidden", filtered.length !== 0);
+
+  filtered.forEach((st, idx) => {
     const item = document.createElement("div");
     item.className = "item";
     const meta = formatStationMeta(st);
@@ -300,7 +311,7 @@ function renderStations() {
     btn.addEventListener("click", () => {
       const idx = Number(btn.dataset.del);
       if (!Number.isFinite(idx)) return;
-      const mineIdx = merged[idx]?._mineIndex;
+      const mineIdx = filtered[idx]?._mineIndex;
       if (!Number.isFinite(mineIdx)) return;
       state.stations.splice(mineIdx, 1);
       saveState(state);
@@ -313,7 +324,7 @@ function renderStations() {
     btn.addEventListener("click", () => {
       const idx = Number(btn.dataset.edit);
       if (!Number.isFinite(idx)) return;
-      const stMerged = merged[idx];
+      const stMerged = filtered[idx];
       if (!stMerged || stMerged._source !== "mine") return;
       const mineIdx = stMerged._mineIndex;
       const st = state.stations[mineIdx];
@@ -341,6 +352,29 @@ function initNav() {
 function initStations() {
   const cancelBtn = $("#btnStationCancel");
   setStationEditing(null);
+
+  const searchInput = $("#stationsSearch");
+  const searchClear = $("#stationsSearchClear");
+  const applySearchUi = () => {
+    const has = stationsQuery.trim().length > 0;
+    searchClear.classList.toggle("hidden", !has);
+  };
+
+  searchInput.addEventListener("input", () => {
+    stationsQuery = searchInput.value || "";
+    applySearchUi();
+    renderStations();
+  });
+
+  searchClear.addEventListener("click", () => {
+    stationsQuery = "";
+    searchInput.value = "";
+    applySearchUi();
+    renderStations();
+    searchInput.focus();
+  });
+
+  applySearchUi();
 
   const setFilter = (next) => {
     stationsFilter = next;

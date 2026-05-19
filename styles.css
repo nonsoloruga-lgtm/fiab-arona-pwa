@@ -257,6 +257,49 @@ code {
   justify-content: flex-end;
 }
 
+.searchrow {
+  margin: 10px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(11, 42, 58, 0.14);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 14px 34px rgba(10, 38, 55, 0.10);
+}
+
+.searchrow__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(252, 222, 76, 0.55);
+  border: 1px solid rgba(0, 106, 167, 0.16);
+  flex: 0 0 auto;
+}
+
+.searchrow__input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.searchrow__clear {
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  border: 1px solid rgba(11, 42, 58, 0.14);
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  font-weight: 900;
+}
+
 .cta {
   margin-top: 12px;
   border-radius: 22px;
