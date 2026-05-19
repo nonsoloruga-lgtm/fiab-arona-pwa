@@ -33,7 +33,7 @@ const DEFAULT_STATE = {
   links: [
     { title: "FIAB Arona (sito)", url: "https://sites.google.com/view/fiab-arona/home", group: "FIAB" },
     { title: "FIAB (sito nazionale)", url: "https://www.fiabitalia.it", group: "FIAB" },
-    { title: "Bicitalia", url: "https://www.bicitalia.org", group: "Ciclovie" },
+    { title: "Bicitalia", url: "https://bicitalia.it/", group: "Ciclovie" },
     { title: "Albergabici", url: "https://www.albergabici.it/it/", group: "Ciclovie" },
     {
       title: "Calendario eventi Arona",
@@ -44,16 +44,21 @@ const DEFAULT_STATE = {
   stations: []
 };
 
+function keyOfLink(x) {
+  return `${String(x?.group || "")}::${String(x?.title || "")}`;
+}
+
+const DEFAULT_LINK_RANK = new Map(DEFAULT_STATE.links.map((l, i) => [keyOfLink(l), i]));
+
 function mergeDefaultsByKey(current, defaults) {
   const currentList = Array.isArray(current) ? current : [];
   const defaultsList = Array.isArray(defaults) ? defaults : [];
 
-  const keyOf = (x) => `${String(x?.group || "")}::${String(x?.title || "")}`;
-  const seen = new Set(currentList.map(keyOf));
+  const seen = new Set(currentList.map(keyOfLink));
   const merged = currentList.slice();
 
   defaultsList.forEach((d) => {
-    const key = keyOf(d);
+    const key = keyOfLink(d);
     if (seen.has(key)) return;
     merged.push(d);
     seen.add(key);
@@ -231,7 +236,14 @@ function renderLinks() {
     actions.className = "item__actions";
     links
       .slice()
-      .sort((a, b) => String(a.title || "").localeCompare(String(b.title || ""), "it"))
+      .sort((a, b) => {
+        const ra = DEFAULT_LINK_RANK.get(keyOfLink(a));
+        const rb = DEFAULT_LINK_RANK.get(keyOfLink(b));
+        if (typeof ra === "number" && typeof rb === "number" && ra !== rb) return ra - rb;
+        if (typeof ra === "number" && typeof rb !== "number") return -1;
+        if (typeof ra !== "number" && typeof rb === "number") return 1;
+        return String(a.title || "").localeCompare(String(b.title || ""), "it");
+      })
       .forEach((l) => {
         const a = document.createElement("a");
         a.className = "btn btn--primary";
