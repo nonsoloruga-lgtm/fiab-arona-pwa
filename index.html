@@ -99,18 +99,16 @@
 
         <section id="view-stations" class="view">
           <div class="sectionhead">
-            <div class="sectionhead__title">Colonnine ricaricabili</div>
+            <div class="sectionhead__title">Punti Ricarica</div>
             <div class="sectionhead__subtitle">
               Le colonnine possono essere <b>Pubbliche</b> (uguali per tutti) e <b>Mie</b> (solo su questo dispositivo). Le pubbliche arrivano da un file sul sito: serve connessione per aggiornarle.
             </div>
           </div>
 
           <div class="chips">
-            <button class="chip chip--active" id="chipStationsAll" type="button">Tutte</button>
-            <button class="chip" id="chipStationsPublic" type="button">Pubbliche</button>
-            <button class="chip" id="chipStationsMine" type="button">Mie</button>
+            <button class="chip chip--active" id="chipStationsPublic" type="button">Pubbliche</button>
+            <button class="chip chip--ghost" id="btnStationsPropose" type="button">Aggiungi un punto di ricarica</button>
             <button class="chip chip--accent" id="btnStationsRefreshPublic" type="button">Aggiorna pubbliche</button>
-            <button class="chip chip--ghost" id="btnStationsPropose" type="button">Proponi via mail o condividi la posizione</button>
           </div>
 
           <div id="stationsFormWrap">
@@ -161,8 +159,8 @@
           <div class="modal hidden" id="proposalModal" role="dialog" aria-modal="true" aria-labelledby="proposalTitle">
             <div class="modal__backdrop" data-close="1"></div>
             <div class="modal__panel">
-              <div class="modal__title" id="proposalTitle">Proponi una colonnina</div>
-              <div class="modal__text">Puoi inviare una mail precompilata oppure condividere la tua posizione (per indicare un punto).</div>
+              <div class="modal__title" id="proposalTitle">Aggiungi un punto di ricarica</div>
+              <div class="modal__text">Puoi inviare una mail precompilata agli amministratori oppure condividere la tua posizione (per indicare il punto).</div>
               <div class="modal__actions">
                 <button class="btn btn--primary" id="btnProposalEmail" type="button">Invia mail</button>
                 <button class="btn" id="btnProposalLocation" type="button">Condividi posizione</button>

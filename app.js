@@ -344,16 +344,12 @@ function initStations() {
 
   const setFilter = (next) => {
     stationsFilter = next;
-    $("#chipStationsAll").classList.toggle("chip--active", next === "all");
     $("#chipStationsPublic").classList.toggle("chip--active", next === "public");
-    $("#chipStationsMine").classList.toggle("chip--active", next === "mine");
     $("#stationsFormWrap").classList.toggle("hidden", next !== "mine");
     renderStations();
   };
 
-  $("#chipStationsAll").addEventListener("click", () => setFilter("all"));
   $("#chipStationsPublic").addEventListener("click", () => setFilter("public"));
-  $("#chipStationsMine").addEventListener("click", () => setFilter("mine"));
 
   $("#btnStationsRefreshPublic").addEventListener("click", async () => {
     const ok = await fetchPublicStations();
@@ -369,7 +365,13 @@ function initStations() {
   if (!PROPOSAL_EMAIL) {
     proposeBtn.classList.add("hidden");
   } else {
-    proposeBtn.addEventListener("click", () => openModal());
+    proposeBtn.addEventListener("click", () => {
+      // Show the personal form (Mie) where the user can add/edit and export.
+      setFilter("mine");
+      const formWrap = $("#stationsFormWrap");
+      formWrap.scrollIntoView({ behavior: "smooth", block: "start" });
+      openModal();
+    });
   }
 
   $("#btnProposalClose").addEventListener("click", closeModal);
@@ -472,7 +474,7 @@ function initStations() {
   });
 
   // Default: show list-first, insertion only under "Mie".
-  setFilter("all");
+  setFilter("public");
 }
 
 function initTopbar() {
