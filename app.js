@@ -153,6 +153,12 @@ function stationMapsLink(st) {
   return "";
 }
 
+function stationNavLink(st) {
+  if (!isValidLatLon(st.lat, st.lon)) return "";
+  const dest = `${st.lat},${st.lon}`;
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
+}
+
 let state = loadState();
 let editingStationIndex = null;
 let publicStations = [];
@@ -457,6 +463,102 @@ function initStations() {
     );
   });
 
+  // Map modal (Leaflet)
+  const stationsMapModal = $("#stationsMapModal");
+  const closeMap = () => stationsMapModal.classList.add("hidden");
+  const openMap = () => stationsMapModal.classList.remove("hidden");
+  stationsMapModal.querySelectorAll("[data-close='map']").forEach((el) => el.addEventListener("click", closeMap));
+  $("#btnMapClose").addEventListener("click", closeMap);
+
+  let map = null;
+  let markersLayer = null;
+  let myPosMarker = null;
+
+  const buildMapPoints = () => {
+    const points = [];
+    publicStations.forEach((st) => points.push({ ...st, _source: "public" }));
+    state.stations.forEach((st) => points.push({ ...st, _source: "mine" }));
+    return points.filter((st) => isValidLatLon(st.lat, st.lon));
+  };
+
+  const ensureMap = () => {
+    if (map) return true;
+    if (!window.L) {
+      alert("La mappa non è ancora pronta (manca connessione o caricamento). Riprova tra qualche secondo.");
+      return false;
+    }
+    map = window.L.map("stationsMap", { zoomControl: true, scrollWheelZoom: false });
+    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap"
+    }).addTo(map);
+    markersLayer = window.L.layerGroup().addTo(map);
+    map.setView([45.8, 8.6], 11);
+    return true;
+  };
+
+  const renderMapMarkers = () => {
+    if (!ensureMap()) return;
+    markersLayer.clearLayers();
+
+    const points = buildMapPoints()
+      .filter((st) => {
+        const q = stationsQuery.trim().toLocaleLowerCase("it");
+        if (!q) return true;
+        return String(st.name || "").toLocaleLowerCase("it").includes(q);
+      })
+      .sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "it", { sensitivity: "base" }));
+
+    const bounds = [];
+    points.forEach((st) => {
+      const lat = Number(st.lat);
+      const lon = Number(st.lon);
+      const nav = stationNavLink(st);
+      const srcLabel = st._source === "public" ? "Pubblica" : "Mia";
+      const popup = `
+        <div style="font-weight:900;margin-bottom:4px;">${escapeHtml(st.name || "")}</div>
+        <div style="font-size:12px;color:#335b6c;margin-bottom:8px;">${escapeHtml(srcLabel)} · ${escapeHtml(formatStationMeta(st) || "")}</div>
+        ${nav ? `<a href="${escapeHtml(nav)}" target="_blank" rel="noopener noreferrer">Naviga</a>` : ""}
+      `;
+      const m = window.L.marker([lat, lon]).bindPopup(popup);
+      markersLayer.addLayer(m);
+      bounds.push([lat, lon]);
+    });
+
+    if (bounds.length) {
+      map.fitBounds(bounds, { padding: [20, 20] });
+    }
+
+    setTimeout(() => map.invalidateSize(), 0);
+  };
+
+  $("#btnStationsMap").addEventListener("click", () => {
+    openMap();
+    renderMapMarkers();
+  });
+
+  $("#btnMapMyPos").addEventListener("click", () => {
+    if (!ensureMap()) return;
+    if (!navigator.geolocation) return alert("Geolocalizzazione non supportata dal browser.");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        if (myPosMarker) myPosMarker.remove();
+        myPosMarker = window.L.circleMarker([lat, lon], {
+          radius: 7,
+          color: "#006aa7",
+          weight: 3,
+          fillColor: "#fcde4c",
+          fillOpacity: 0.9
+        }).addTo(map);
+        map.setView([lat, lon], Math.max(map.getZoom(), 14));
+      },
+      () => alert("Non riesco a leggere la posizione. Controlla i permessi del browser."),
+      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+    );
+  });
+
   $("#stationForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
@@ -479,6 +581,7 @@ function initStations() {
     saveState(state);
     e.currentTarget.reset();
     renderStations();
+    if (!stationsMapModal.classList.contains("hidden")) renderMapMarkers();
   });
 
   cancelBtn.addEventListener("click", () => {
@@ -492,6 +595,7 @@ function initStations() {
     setStationEditing(null);
     saveState(state);
     renderStations();
+    if (!stationsMapModal.classList.contains("hidden")) renderMapMarkers();
   });
 
   $("#btnStationsExport").addEventListener("click", async () => {

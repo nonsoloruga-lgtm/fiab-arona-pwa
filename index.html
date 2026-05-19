@@ -19,6 +19,10 @@
 
     <!-- Cache-bust to avoid stale updates on PWA/SW -->
     <link rel="stylesheet" href="./styles.css?v=2026-05-19-1" />
+
+    <!-- Leaflet (map) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   </head>
   <body>
     <div id="app">
@@ -109,6 +113,7 @@
             <button class="chip chip--active" id="chipStationsPublic" type="button">Pubbliche</button>
             <button class="chip chip--ghost" id="btnStationsPropose" type="button">Aggiungi un punto di ricarica</button>
             <button class="chip chip--accent" id="btnStationsRefreshPublic" type="button">Aggiorna pubbliche</button>
+            <button class="chip" id="btnStationsMap" type="button">Mappa</button>
           </div>
 
           <div class="searchrow" id="stationsSearchRow">
@@ -171,6 +176,21 @@
                 <button class="btn btn--primary" id="btnProposalEmail" type="button">Invia mail</button>
                 <button class="btn" id="btnProposalLocation" type="button">Condividi posizione</button>
                 <button class="btn btn--ghost" id="btnProposalClose" type="button">Chiudi</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal hidden" id="stationsMapModal" role="dialog" aria-modal="true" aria-labelledby="stationsMapTitle">
+            <div class="modal__backdrop" data-close="map"></div>
+            <div class="modal__panel modal__panel--map">
+              <div class="modal__title" id="stationsMapTitle">Mappa punti ricarica</div>
+              <div class="modal__text">Mostra le colonnine pubbliche e le tue (se hanno Lat/Lon). Tocca un marker per “Naviga”.</div>
+              <div class="mapwrap">
+                <div id="stationsMap" class="map"></div>
+              </div>
+              <div class="modal__actions">
+                <button class="btn" id="btnMapMyPos" type="button">La mia posizione</button>
+                <button class="btn btn--ghost" id="btnMapClose" type="button">Chiudi</button>
               </div>
             </div>
           </div>
