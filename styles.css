@@ -111,6 +111,24 @@ code {
   font-size: 18px;
 }
 
+.installbtn {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(11, 42, 58, 0.14);
+  background: rgba(252, 222, 76, 0.72);
+  color: #053a58;
+  box-shadow: 0 10px 26px rgba(10, 38, 55, 0.12);
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.installbtn:active {
+  transform: translateY(1px);
+}
+
 .main {
   flex: 1;
   padding: 10px 16px 92px;
