@@ -151,6 +151,55 @@ code {
   gap: 10px;
 }
 
+.homebottom {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.homecard {
+  text-decoration: none;
+  border: 1px solid rgba(11, 42, 58, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: var(--radius);
+  padding: 12px 12px;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 6px;
+}
+
+.homecard__icon {
+  font-size: 20px;
+}
+
+.homecard__title {
+  font-weight: 950;
+  font-size: 14px;
+}
+
+.homecard__text {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.homecard__actions {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.homecard--social {
+  cursor: default;
+}
+
+.homecard--social a.btn {
+  text-align: center;
+}
+
 .chips {
   margin: 10px 0 12px;
   display: flex;
@@ -674,6 +723,9 @@ code {
   }
   .grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+  .homebottom {
+    grid-template-columns: 1fr 1fr;
   }
   .row {
     grid-template-columns: 1fr 1fr;
