@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-15",
+  "updatedAt": "2026-05-19",
   "stations": [
     {
       "name": "Arona",
       "area": "Arona lungolago",
       "notes": "da parte all'ufficio del turismo di fronte alla stazione ferroviaria",
-      "lat": "45.756380",
-      "lon": "8.560327",
-      "url": "https://maps.app.goo.gl/aB4nXdEwoqwJo3px6"
+      "lat": "45.756057",
+      "lon": "8.560383",
+      "url": "https://maps.app.goo.gl/q5RURfU6so7nAu7N9"
     },
     {
       "name": "Pallanza",
