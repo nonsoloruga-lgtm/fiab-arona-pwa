@@ -22,12 +22,6 @@ const DEFAULT_STATE = {
       url: "https://www.komoot.com/it-it/collection/2179370/-tourist-tour-for-draisina?t_s=referral&t_cid=collection_share&t_ref_username=728887370039",
       description: "Raccolta Komoot condivisa (apre nell’app/sito Komoot).",
       embedUrl: ""
-    },
-    {
-      title: "Komoot · Accedi",
-      url: "https://www.komoot.com/it-it/signin?referrer=www.google.com&redirect=https%3A%2F%2Fwww.komoot.com%2Fit-it&reason=home-hero-block",
-      description: "Accesso a Komoot.",
-      embedUrl: ""
     }
   ],
   links: [
