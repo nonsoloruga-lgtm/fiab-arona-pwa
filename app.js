@@ -16,6 +16,12 @@ const DEFAULT_STATE = {
       url: "https://www.openstreetmap.org",
       description: "Sostituisci con la tua mappa QGIS/qgis2web o un link utile.",
       embedUrl: ""
+    },
+    {
+      title: "Komoot · Raccolta tour (Draisina)",
+      url: "https://www.komoot.com/it-it/collection/2179370/-tourist-tour-for-draisina?t_s=referral&t_cid=collection_share&t_ref_username=728887370039",
+      description: "Raccolta Komoot condivisa (apre nell’app/sito Komoot).",
+      embedUrl: ""
     }
   ],
   links: [
