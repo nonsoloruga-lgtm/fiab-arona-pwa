@@ -35,10 +35,32 @@ const DEFAULT_STATE = {
     { title: "FIAB (sito nazionale)", url: "https://www.fiabitalia.it", group: "FIAB" },
     { title: "Bicitalia", url: "https://www.bicitalia.org", group: "Ciclovie" },
     { title: "Albergabici", url: "https://www.albergabici.it/it/", group: "Ciclovie" },
-    { title: "AndiamoInBici.it", url: "https://www.andiamoinbici.it/", group: "Il calendario FIAB" }
+    {
+      title: "Calendario eventi Arona",
+      url: "https://www.andiamoinbici.it/search.php?start_date=19%2F05%2F2026&end_date=&q=&dove=&assid=228&tag_1=&tag_2=&tag_3=&tag_4=&tag_5=&tag_6=&btnClick=Cerca",
+      group: "Calendario eventi Arona"
+    }
   ],
   stations: []
 };
+
+function mergeDefaultsByKey(current, defaults) {
+  const currentList = Array.isArray(current) ? current : [];
+  const defaultsList = Array.isArray(defaults) ? defaults : [];
+
+  const keyOf = (x) => `${String(x?.group || "")}::${String(x?.title || "")}`;
+  const seen = new Set(currentList.map(keyOf));
+  const merged = currentList.slice();
+
+  defaultsList.forEach((d) => {
+    const key = keyOf(d);
+    if (seen.has(key)) return;
+    merged.push(d);
+    seen.add(key);
+  });
+
+  return merged;
+}
 
 function safeJsonParse(text) {
   try {
@@ -53,11 +75,16 @@ function loadState() {
   if (!raw) return clone(DEFAULT_STATE);
   const parsed = safeJsonParse(raw);
   if (!parsed.ok || typeof parsed.value !== "object" || !parsed.value) return clone(DEFAULT_STATE);
-  return {
-    maps: Array.isArray(parsed.value.maps) ? parsed.value.maps : clone(DEFAULT_STATE.maps),
-    links: Array.isArray(parsed.value.links) ? parsed.value.links : clone(DEFAULT_STATE.links),
-    stations: Array.isArray(parsed.value.stations) ? parsed.value.stations : []
-  };
+  const maps = mergeDefaultsByKey(
+    Array.isArray(parsed.value.maps) ? parsed.value.maps : clone(DEFAULT_STATE.maps),
+    DEFAULT_STATE.maps,
+  );
+  const links = mergeDefaultsByKey(
+    Array.isArray(parsed.value.links) ? parsed.value.links : clone(DEFAULT_STATE.links),
+    DEFAULT_STATE.links,
+  );
+  const stations = Array.isArray(parsed.value.stations) ? parsed.value.stations : [];
+  return { maps, links, stations };
 }
 
 function saveState(state) {
