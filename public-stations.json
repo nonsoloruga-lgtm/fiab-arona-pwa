@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-05-19",
+  "updatedAt": "2026-06-04",
   "stations": [
     {
       "name": "Arona",
@@ -9,6 +9,14 @@
       "lat": "45.756057",
       "lon": "8.560383",
       "url": "https://maps.app.goo.gl/q5RURfU6so7nAu7N9"
+    },
+    {
+      "name": "Baveno",
+      "area": "Baveno",
+      "notes": "Pensilina Intelligente Margherita",
+      "lat": "45.910903",
+      "lon": "8.5006148",
+      "url": "https://maps.app.goo.gl/Fgk9agCa8bSLnUk6A"
     },
     {
       "name": "Pallanza",
