@@ -1,5 +1,14 @@
 {
   "version": 1,
   "updatedAt": "2026-06-05",
-  "stations": []
+  "stations": [
+    {
+      "name": "Borgomanero",
+      "area": "Borgomanero",
+      "notes": "fontanella pubblica",
+      "lat": "45.700660",
+      "lon": "8.464298",
+      "url": "https://maps.app.goo.gl/r5o96oydZqckp2AM6"
+    }
+  ]
 }
