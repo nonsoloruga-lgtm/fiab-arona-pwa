@@ -156,6 +156,61 @@ function stationNavLink(st) {
   return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
 }
 
+function shareCurrentLocation({ title, shareText, fallbackMessage }) {
+  if (!navigator.geolocation) {
+    alert("Geolocalizzazione non supportata dal browser.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = String(pos.coords.latitude.toFixed(6));
+      const lon = String(pos.coords.longitude.toFixed(6));
+      const mapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
+      const text = `${shareText} — posizione: ${lat}, ${lon}`;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, text, url: mapsUrl });
+          return;
+        } catch (_) {}
+      }
+      try {
+        await navigator.clipboard.writeText(`${text}\n${mapsUrl}`);
+        alert("Posizione copiata negli appunti.");
+      } catch (_) {
+        alert(mapsUrl);
+      }
+    },
+    () => {
+      const message =
+        `${fallbackMessage}\n\n` +
+        `Su iPhone: Impostazioni > Privacy e sicurezza > Localizzazione > Safari > "Mentre usi l'app".\n` +
+        `Poi riapri la PWA e riprova.`;
+      alert(message);
+    },
+    { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+  );
+}
+
+function requestCurrentLocation(onSuccess, fallbackMessage) {
+  if (!navigator.geolocation) {
+    alert("Geolocalizzazione non supportata dal browser.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    onSuccess,
+    () => {
+      alert(
+        `${fallbackMessage}\n\n` +
+        `Su iPhone: Impostazioni > Privacy e sicurezza > Localizzazione > Safari > "Mentre usi l'app".\n` +
+        `Su Android: assicurati che la localizzazione sia attiva e che Safari/Browser abbia il permesso.`,
+      );
+    },
+    { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+  );
+}
+
 let state = loadState();
 let editingStationIndex = null;
 let fountainsEditingIndex = null;
@@ -524,29 +579,11 @@ function initFountains() {
 
   $("#btnFountainsProposalLocation").addEventListener("click", () => {
     closeProposal();
-    if (!navigator.geolocation) return alert("Geolocalizzazione non supportata dal browser.");
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = String(pos.coords.latitude.toFixed(6));
-        const lon = String(pos.coords.longitude.toFixed(6));
-        const mapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
-        const text = `Proposta fontanella FIAB Arona — posizione: ${lat}, ${lon}`;
-        if (navigator.share) {
-          try {
-            await navigator.share({ title: "Posizione fontanella", text, url: mapsUrl });
-            return;
-          } catch (_) {}
-        }
-        try {
-          await navigator.clipboard.writeText(`${text}\n${mapsUrl}`);
-          alert("Posizione copiata negli appunti.");
-        } catch (_) {
-          alert(mapsUrl);
-        }
-      },
-      () => alert("Non riesco a leggere la posizione. Controlla i permessi del browser."),
-      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
-    );
+    shareCurrentLocation({
+      title: "Posizione fontanella",
+      shareText: "Proposta fontanella FIAB Arona",
+      fallbackMessage: "Non riesco a leggere la posizione della fontanella.",
+    });
   });
 
   const ensureMap = () => {
@@ -604,8 +641,7 @@ function initFountains() {
 
   $("#btnFountainsMapMyPos").addEventListener("click", () => {
     if (!ensureMap()) return;
-    if (!navigator.geolocation) return alert("Geolocalizzazione non supportata dal browser.");
-    navigator.geolocation.getCurrentPosition(
+    requestCurrentLocation(
       (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
@@ -619,8 +655,7 @@ function initFountains() {
         }).addTo(map);
         map.setView([lat, lon], Math.max(map.getZoom(), 14));
       },
-      () => alert("Non riesco a leggere la posizione. Controlla i permessi del browser."),
-      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+      "Non riesco a leggere la posizione della mappa fontanelle."
     );
   });
 
@@ -768,29 +803,11 @@ function initStations() {
 
   $("#btnProposalLocation").addEventListener("click", () => {
     closeModal();
-    if (!navigator.geolocation) return alert("Geolocalizzazione non supportata dal browser.");
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = String(pos.coords.latitude.toFixed(6));
-        const lon = String(pos.coords.longitude.toFixed(6));
-        const mapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
-        const text = `Proposta colonnina FIAB Arona — posizione: ${lat}, ${lon}`;
-        if (navigator.share) {
-          try {
-            await navigator.share({ title: "Posizione colonnina", text, url: mapsUrl });
-            return;
-          } catch (_) {}
-        }
-        try {
-          await navigator.clipboard.writeText(`${text}\n${mapsUrl}`);
-          alert("Posizione copiata negli appunti.");
-        } catch (_) {
-          alert(mapsUrl);
-        }
-      },
-      () => alert("Non riesco a leggere la posizione. Controlla i permessi del browser."),
-      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
-    );
+    shareCurrentLocation({
+      title: "Posizione colonnina",
+      shareText: "Proposta colonnina FIAB Arona",
+      fallbackMessage: "Non riesco a leggere la posizione della colonnina.",
+    });
   });
 
   // Map modal (Leaflet)
@@ -869,8 +886,7 @@ function initStations() {
 
   $("#btnMapMyPos").addEventListener("click", () => {
     if (!ensureMap()) return;
-    if (!navigator.geolocation) return alert("Geolocalizzazione non supportata dal browser.");
-    navigator.geolocation.getCurrentPosition(
+    requestCurrentLocation(
       (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
@@ -884,8 +900,7 @@ function initStations() {
         }).addTo(map);
         map.setView([lat, lon], Math.max(map.getZoom(), 14));
       },
-      () => alert("Non riesco a leggere la posizione. Controlla i permessi del browser."),
-      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+      "Non riesco a leggere la tua posizione per la mappa punti ricarica."
     );
   });
 
