@@ -1,5 +1,6 @@
 const STORAGE_KEY = "fiab_arona_pwa_state_v1";
 const PUBLIC_STATIONS_URL = "./public-stations.json";
+const PUBLIC_FOUNTAINS_URL = "./public-fountains.json";
 // Email to receive proposals (admins will then add to public-stations.json).
 // Leave empty to hide the "Proponi" button.
 const PROPOSAL_EMAIL = "soloruga@libero.it";
@@ -35,7 +36,8 @@ const DEFAULT_STATE = {
       group: "Calendario eventi Arona"
     }
   ],
-  stations: []
+  stations: [],
+  fountains: []
 };
 
 function keyOfLink(x) {
@@ -83,7 +85,8 @@ function loadState() {
     DEFAULT_STATE.links,
   );
   const stations = Array.isArray(parsed.value.stations) ? parsed.value.stations : [];
-  return { maps, links, stations };
+  const fountains = Array.isArray(parsed.value.fountains) ? parsed.value.fountains : [];
+  return { maps, links, stations, fountains };
 }
 
 function saveState(state) {
@@ -155,9 +158,13 @@ function stationNavLink(st) {
 
 let state = loadState();
 let editingStationIndex = null;
+let fountainsEditingIndex = null;
 let publicStations = [];
+let publicFountains = [];
 let stationsFilter = "all"; // all | public | mine
 let stationsQuery = "";
+let fountainsFilter = "all";
+let fountainsQuery = "";
 
 function setStationEditing(idx) {
   editingStationIndex = typeof idx === "number" ? idx : null;
@@ -167,6 +174,14 @@ function setStationEditing(idx) {
   if (cancelBtn) cancelBtn.classList.toggle("hidden", editingStationIndex === null);
 }
 
+function setFountainEditing(idx) {
+  fountainsEditingIndex = typeof idx === "number" ? idx : null;
+  const submitBtn = document.querySelector("#btnFountainSubmit");
+  const cancelBtn = document.querySelector("#btnFountainCancel");
+  if (submitBtn) submitBtn.textContent = fountainsEditingIndex === null ? "Aggiungi" : "Salva modifiche";
+  if (cancelBtn) cancelBtn.classList.toggle("hidden", fountainsEditingIndex === null);
+}
+
 async function fetchPublicStations() {
   try {
     const res = await fetch(`${PUBLIC_STATIONS_URL}?v=${Date.now()}`, { cache: "no-store" });
@@ -174,6 +189,19 @@ async function fetchPublicStations() {
     const data = await res.json();
     const list = Array.isArray(data?.stations) ? data.stations : [];
     publicStations = list;
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+async function fetchPublicFountains() {
+  try {
+    const res = await fetch(`${PUBLIC_FOUNTAINS_URL}?v=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const list = Array.isArray(data?.stations) ? data.stations : [];
+    publicFountains = list;
     return true;
   } catch (_) {
     return false;
@@ -341,6 +369,314 @@ function renderStations() {
       form.elements.namedItem("name").focus();
     });
   });
+}
+
+function renderFountains() {
+  const list = $("#fountainsList");
+  list.innerHTML = "";
+  const empty = $("#fountainsEmpty");
+  const merged = [];
+  if (fountainsFilter === "all" || fountainsFilter === "public") {
+    publicFountains.forEach((st) => merged.push({ ...st, _source: "public" }));
+  }
+  if (fountainsFilter === "all" || fountainsFilter === "mine") {
+    state.fountains.forEach((st, mineIndex) => merged.push({ ...st, _source: "mine", _mineIndex: mineIndex }));
+  }
+  const q = fountainsQuery.trim().toLocaleLowerCase("it");
+  const filtered = merged
+    .filter((st) => (!q ? true : String(st.name || "").toLocaleLowerCase("it").includes(q)))
+    .sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "it", { sensitivity: "base" }));
+  empty.classList.toggle("hidden", filtered.length !== 0);
+  filtered.forEach((st, idx) => {
+    const item = document.createElement("div");
+    item.className = "item";
+    const meta = formatStationMeta(st);
+    const maps = stationMapsLink(st);
+    const pill = st._source === "public" ? `<span class="pill pill--public">Pubblica</span>` : `<span class="pill pill--mine">Mia</span>`;
+    const canEdit = st._source === "mine";
+    item.innerHTML = `
+      <div class="item__title">${escapeHtml(st.name || `Punto ${idx + 1}`)} ${pill}</div>
+      <div class="item__meta">${escapeHtml(meta || "—")}</div>
+      <div class="item__actions">
+        ${maps ? `<a class="btn btn--primary" href="${escapeHtml(maps)}" target="_blank" rel="noopener noreferrer">Apri mappa</a>` : ""}
+        ${canEdit ? `<button class="btn" data-edit-f="${idx}">Modifica</button>` : ""}
+        ${canEdit ? `<button class="btn btn--danger" data-del-f="${idx}">Elimina</button>` : ""}
+      </div>
+    `;
+    list.appendChild(item);
+  });
+  list.querySelectorAll("button[data-del-f]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.delF);
+      if (!Number.isFinite(idx)) return;
+      const mineIdx = filtered[idx]?._mineIndex;
+      if (!Number.isFinite(mineIdx)) return;
+      state.fountains.splice(mineIdx, 1);
+      saveState(state);
+      renderFountains();
+      if (!fountainsMapModal.classList.contains("hidden")) renderFountainsMap();
+    });
+  });
+  list.querySelectorAll("button[data-edit-f]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.editF);
+      if (!Number.isFinite(idx)) return;
+      const stMerged = filtered[idx];
+      if (!stMerged || stMerged._source !== "mine") return;
+      const mineIdx = stMerged._mineIndex;
+      const st = state.fountains[mineIdx];
+      if (!st) return;
+      const form = $("#fountainForm");
+      form.elements.namedItem("name").value = st.name || "";
+      form.elements.namedItem("area").value = st.area || "";
+      form.elements.namedItem("notes").value = st.notes || "";
+      form.elements.namedItem("lat").value = st.lat || "";
+      form.elements.namedItem("lon").value = st.lon || "";
+      form.elements.namedItem("url").value = st.url || "";
+      fountainsEditingIndex = mineIdx;
+      updateFountainEditUi();
+      navTo("fountains");
+      form.elements.namedItem("name").focus();
+    });
+  });
+}
+
+function initFountains() {
+  const cancelBtn = $("#btnFountainCancel");
+  setFountainEditing(null);
+
+  const searchInput = $("#fountainsSearch");
+  const searchClear = $("#fountainsSearchClear");
+  const proposalModal = $("#fountainsProposalModal");
+  const mapModal = $("#fountainsMapModal");
+  let map = null;
+  let markersLayer = null;
+  let myPosMarker = null;
+
+  const applySearchUi = () => {
+    searchClear.classList.toggle("hidden", !fountainsQuery.trim().length);
+  };
+
+  searchInput.addEventListener("input", () => {
+    fountainsQuery = searchInput.value || "";
+    applySearchUi();
+    renderFountains();
+    if (!mapModal.classList.contains("hidden")) renderFountainsMap();
+  });
+
+  searchClear.addEventListener("click", () => {
+    fountainsQuery = "";
+    searchInput.value = "";
+    applySearchUi();
+    renderFountains();
+    searchInput.focus();
+    if (!mapModal.classList.contains("hidden")) renderFountainsMap();
+  });
+
+  applySearchUi();
+
+  const setFilter = (next) => {
+    fountainsFilter = next;
+    $("#chipFountainsPublic").classList.toggle("chip--active", next === "public");
+    $("#fountainsFormWrap").classList.toggle("hidden", next !== "mine");
+    renderFountains();
+    if (!mapModal.classList.contains("hidden")) renderFountainsMap();
+  };
+
+  $("#chipFountainsPublic").addEventListener("click", () => setFilter("public"));
+
+  const closeProposal = () => proposalModal.classList.add("hidden");
+  const openProposal = () => proposalModal.classList.remove("hidden");
+  const closeMap = () => mapModal.classList.add("hidden");
+  const openMap = () => mapModal.classList.remove("hidden");
+
+  proposalModal.querySelectorAll("[data-close='fountains-proposal']").forEach((el) => el.addEventListener("click", closeProposal));
+  $("#btnFountainsProposalClose").addEventListener("click", closeProposal);
+  mapModal.querySelectorAll("[data-close='fountains-map']").forEach((el) => el.addEventListener("click", closeMap));
+  $("#btnFountainsMapClose").addEventListener("click", closeMap);
+
+  $("#btnFountainsPropose").addEventListener("click", () => {
+    setFilter("mine");
+    $("#fountainsFormWrap").scrollIntoView({ behavior: "smooth", block: "start" });
+    openProposal();
+  });
+
+  $("#btnFountainsRefreshPublic").addEventListener("click", async () => {
+    const ok = await fetchPublicFountains();
+    renderFountains();
+    alert(ok ? "Fontanelle pubbliche aggiornate." : "Non riesco ad aggiornare (serve connessione).");
+  });
+
+  $("#btnFountainsProposalEmail").addEventListener("click", () => {
+    closeProposal();
+    const subject = "Proposta fontanella FIAB Arona";
+    const body =
+      "Ciao! Vorrei proporre una fontanella per l’elenco pubblico.%0D%0A%0D%0A" +
+      "Nome:%0D%0A" +
+      "Comune/Zona:%0D%0A" +
+      "Indirizzo/Note:%0D%0A" +
+      "Lat:%0D%0A" +
+      "Lon:%0D%0A" +
+      "Link (opzionale):%0D%0A%0D%0A" +
+      "Grazie!";
+    location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${body}`;
+  });
+
+  $("#btnFountainsProposalLocation").addEventListener("click", () => {
+    closeProposal();
+    if (!navigator.geolocation) return alert("Geolocalizzazione non supportata dal browser.");
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = String(pos.coords.latitude.toFixed(6));
+        const lon = String(pos.coords.longitude.toFixed(6));
+        const mapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
+        const text = `Proposta fontanella FIAB Arona — posizione: ${lat}, ${lon}`;
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: "Posizione fontanella", text, url: mapsUrl });
+            return;
+          } catch (_) {}
+        }
+        try {
+          await navigator.clipboard.writeText(`${text}\n${mapsUrl}`);
+          alert("Posizione copiata negli appunti.");
+        } catch (_) {
+          alert(mapsUrl);
+        }
+      },
+      () => alert("Non riesco a leggere la posizione. Controlla i permessi del browser."),
+      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+    );
+  });
+
+  const ensureMap = () => {
+    if (map) return true;
+    if (!window.L) {
+      alert("La mappa non è ancora pronta (manca connessione o caricamento). Riprova tra qualche secondo.");
+      return false;
+    }
+    map = window.L.map("fountainsMap", { zoomControl: true, scrollWheelZoom: false });
+    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap"
+    }).addTo(map);
+    markersLayer = window.L.layerGroup().addTo(map);
+    map.setView([45.8, 8.6], 11);
+    return true;
+  };
+
+  const buildMapPoints = () => {
+    const points = [];
+    if (fountainsFilter === "all" || fountainsFilter === "public") publicFountains.forEach((st) => points.push({ ...st, _source: "public" }));
+    if (fountainsFilter === "all" || fountainsFilter === "mine") state.fountains.forEach((st) => points.push({ ...st, _source: "mine" }));
+    return points.filter((st) => isValidLatLon(st.lat, st.lon));
+  };
+
+  function renderFountainsMap() {
+    if (!ensureMap()) return;
+    markersLayer.clearLayers();
+    const q = fountainsQuery.trim().toLocaleLowerCase("it");
+    const points = buildMapPoints()
+      .filter((st) => (!q ? true : String(st.name || "").toLocaleLowerCase("it").includes(q)))
+      .sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "it", { sensitivity: "base" }));
+    const bounds = [];
+    points.forEach((st) => {
+      const lat = Number(st.lat);
+      const lon = Number(st.lon);
+      const nav = stationNavLink(st);
+      const srcLabel = st._source === "public" ? "Pubblica" : "Mia";
+      const popup = `
+        <div style="font-weight:900;margin-bottom:4px;">${escapeHtml(st.name || "")}</div>
+        <div style="font-size:12px;color:#335b6c;margin-bottom:8px;">${escapeHtml(srcLabel)} · ${escapeHtml(formatStationMeta(st) || "")}</div>
+        ${nav ? `<a href="${escapeHtml(nav)}" target="_blank" rel="noopener noreferrer">Naviga</a>` : ""}
+      `;
+      markersLayer.addLayer(window.L.marker([lat, lon]).bindPopup(popup));
+      bounds.push([lat, lon]);
+    });
+    if (bounds.length) map.fitBounds(bounds, { padding: [20, 20] });
+    setTimeout(() => map.invalidateSize(), 0);
+  }
+
+  $("#btnFountainsMap").addEventListener("click", () => {
+    openMap();
+    renderFountainsMap();
+  });
+
+  $("#btnFountainsMapMyPos").addEventListener("click", () => {
+    if (!ensureMap()) return;
+    if (!navigator.geolocation) return alert("Geolocalizzazione non supportata dal browser.");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        if (myPosMarker) myPosMarker.remove();
+        myPosMarker = window.L.circleMarker([lat, lon], {
+          radius: 7,
+          color: "#006aa7",
+          weight: 3,
+          fillColor: "#fcde4c",
+          fillOpacity: 0.9
+        }).addTo(map);
+        map.setView([lat, lon], Math.max(map.getZoom(), 14));
+      },
+      () => alert("Non riesco a leggere la posizione. Controlla i permessi del browser."),
+      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+    );
+  });
+
+  $("#fountainForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = String(fd.get("name") || "").trim();
+    if (!name) return;
+    const st = {
+      name,
+      area: String(fd.get("area") || "").trim(),
+      notes: String(fd.get("notes") || "").trim(),
+      lat: String(fd.get("lat") || "").trim(),
+      lon: String(fd.get("lon") || "").trim(),
+      url: String(fd.get("url") || "").trim()
+    };
+    if (fountainsEditingIndex !== null && state.fountains[fountainsEditingIndex]) {
+      state.fountains[fountainsEditingIndex] = st;
+      setFountainEditing(null);
+    } else {
+      state.fountains.unshift(st);
+    }
+    saveState(state);
+    e.currentTarget.reset();
+    renderFountains();
+    if (!mapModal.classList.contains("hidden")) renderFountainsMap();
+  });
+
+  $("#btnFountainCancel").addEventListener("click", () => {
+    setFountainEditing(null);
+    $("#fountainForm").reset();
+  });
+
+  $("#btnFountainsClear").addEventListener("click", () => {
+    if (!confirm("Vuoi davvero svuotare la lista fontanelle su questo dispositivo?")) return;
+    state.fountains = [];
+    setFountainEditing(null);
+    saveState(state);
+    renderFountains();
+    if (!mapModal.classList.contains("hidden")) renderFountainsMap();
+  });
+
+  $("#btnFountainsExport").addEventListener("click", async () => {
+    const payload = { version: 1, exportedAt: new Date().toISOString(), stations: state.fountains };
+    if (navigator.share) {
+      try {
+        const file = new File([JSON.stringify(payload, null, 2)], "fiab-arona-fontanelle.json", { type: "application/json" });
+        await navigator.share({ title: "Fontanelle FIAB Arona", files: [file] });
+        return;
+      } catch (_) {}
+    }
+    downloadJson("fiab-arona-fontanelle.json", payload);
+    alert("File esportato. Puoi inviarlo a chi gestisce l’elenco pubblico.");
+  });
+
+  setFilter("public");
 }
 
 function initNav() {
@@ -712,9 +1048,13 @@ function boot() {
   initTopbar();
   initInstallUi();
   initStations();
+  initFountains();
 
   fetchPublicStations().finally(() => {
     renderStations();
+  });
+  fetchPublicFountains().finally(() => {
+    renderFountains();
   });
 
   renderMaps();
