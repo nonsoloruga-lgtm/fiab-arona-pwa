@@ -178,7 +178,8 @@ function shareCurrentLocation({ title, shareText, fallbackMessage }) {
         await navigator.clipboard.writeText(`${text}\n${mapsUrl}`);
         alert("Posizione copiata negli appunti.");
       } catch (_) {
-        alert(mapsUrl);
+        window.open(mapsUrl, "_blank", "noopener,noreferrer");
+        alert("Non riesco a condividere automaticamente. Apro la posizione in Google Maps.");
       }
     },
     () => {
