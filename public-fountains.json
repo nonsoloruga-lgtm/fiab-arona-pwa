@@ -9,6 +9,22 @@
       "lat": "45.700660",
       "lon": "8.464298",
       "url": "https://maps.app.goo.gl/r5o96oydZqckp2AM6"
+    },
+    {
+      "name": "Prato Sesia",
+      "area": "Prato Sesia",
+      "notes": "fontanella pubblica",
+      "lat": "45.647699",
+      "lon": "8.374159",
+      "url": "https://maps.app.goo.gl/UKkJFGvb6DfDvNFUA"
+    },
+    {
+      "name": "San Michele",
+      "area": "Fontaneto D'Agogna",
+      "notes": "fontanella pubblica",
+      "lat": "45.658417",
+      "lon": "8.489636",
+      "url": "https://maps.app.goo.gl/9jDSsiPLcCF5WSzP9"
     }
   ]
 }
