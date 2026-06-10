@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-05",
+  "updatedAt": "2026-06-10",
   "stations": [
     {
       "name": "Borgomanero",
@@ -9,6 +9,14 @@
       "lat": "45.700660",
       "lon": "8.464298",
       "url": "https://maps.app.goo.gl/r5o96oydZqckp2AM6"
+    },
+    {
+      "name": "Arona",
+      "area": "Arona",
+      "notes": "fontanella pubblica",
+      "lat": "45.756313",
+      "lon": "8.560500",
+      "url": "https://maps.app.goo.gl/73QMzsaX6nESqhs68"
     },
     {
       "name": "Fontana Santa",
