@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-04",
+  "updatedAt": "2026-06-10",
   "stations": [
     {
       "name": "Arona",
@@ -9,6 +9,14 @@
       "lat": "45.756057",
       "lon": "8.560383",
       "url": "https://maps.app.goo.gl/q5RURfU6so7nAu7N9"
+    },
+    {
+      "name": "Arona Lidl",
+      "area": "Arona",
+      "notes": "punto ricarica presso Lidl",
+      "lat": "45.751208",
+      "lon": "8.561465",
+      "url": "https://maps.app.goo.gl/om1P6z8dwnw6wfkk7"
     },
     {
       "name": "Baveno",
