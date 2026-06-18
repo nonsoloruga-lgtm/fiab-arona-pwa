@@ -23,6 +23,12 @@ const DEFAULT_STATE = {
       url: "https://www.komoot.com/it-it/collection/2179370/-tourist-tour-for-draisina?t_s=referral&t_cid=collection_share&t_ref_username=728887370039",
       description: "Raccolta Komoot condivisa (apre nell’app/sito Komoot).",
       embedUrl: ""
+    },
+    {
+      title: "Mappe FIAB Arona Komoot",
+      url: "https://www.komoot.com/it-it/user/5877789741712",
+      description: "Profilo Komoot FIAB Arona.",
+      embedUrl: ""
     }
   ],
   links: [
