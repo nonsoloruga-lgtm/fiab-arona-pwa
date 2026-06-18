@@ -13,6 +13,12 @@ const clone = (value) => {
 const DEFAULT_STATE = {
   maps: [
     {
+      title: "Mappe FIAB Arona Komoot",
+      url: "https://www.komoot.com/it-it/user/5877789741712",
+      description: "Profilo Komoot FIAB Arona.",
+      embedUrl: ""
+    },
+    {
       title: "Mappa percorsi (esempio)",
       url: "https://www.openstreetmap.org",
       description: "Sostituisci con la tua mappa QGIS/qgis2web o un link utile.",
@@ -22,12 +28,6 @@ const DEFAULT_STATE = {
       title: "Komoot · Raccolta tour (Draisina)",
       url: "https://www.komoot.com/it-it/collection/2179370/-tourist-tour-for-draisina?t_s=referral&t_cid=collection_share&t_ref_username=728887370039",
       description: "Raccolta Komoot condivisa (apre nell’app/sito Komoot).",
-      embedUrl: ""
-    },
-    {
-      title: "Mappe FIAB Arona Komoot",
-      url: "https://www.komoot.com/it-it/user/5877789741712",
-      description: "Profilo Komoot FIAB Arona.",
       embedUrl: ""
     }
   ],
@@ -50,7 +50,12 @@ function keyOfLink(x) {
   return `${String(x?.group || "")}::${String(x?.title || "")}`;
 }
 
+function keyOfMap(x) {
+  return String(x?.title || "");
+}
+
 const DEFAULT_LINK_RANK = new Map(DEFAULT_STATE.links.map((l, i) => [keyOfLink(l), i]));
+const DEFAULT_MAP_RANK = new Map(DEFAULT_STATE.maps.map((m, i) => [keyOfMap(m), i]));
 
 function mergeDefaultsByKey(current, defaults) {
   const currentList = Array.isArray(current) ? current : [];
@@ -276,7 +281,17 @@ function renderMaps() {
   const empty = $("#mapsEmpty");
   empty.classList.toggle("hidden", state.maps.length !== 0);
 
-  state.maps.forEach((m, idx) => {
+  state.maps
+    .slice()
+    .sort((a, b) => {
+      const ra = DEFAULT_MAP_RANK.get(keyOfMap(a));
+      const rb = DEFAULT_MAP_RANK.get(keyOfMap(b));
+      if (typeof ra === "number" && typeof rb === "number" && ra !== rb) return ra - rb;
+      if (typeof ra === "number" && typeof rb !== "number") return -1;
+      if (typeof ra !== "number" && typeof rb === "number") return 1;
+      return String(a.title || "").localeCompare(String(b.title || ""), "it");
+    })
+    .forEach((m, idx) => {
     const url = normalizeUrl(m.url);
     const embedUrl = normalizeUrl(m.embedUrl || "");
     const description = String(m.description || "").trim();
@@ -303,7 +318,7 @@ function renderMaps() {
         embedBtn.textContent = box.classList.contains("hidden") ? "Mostra qui" : "Nascondi";
       });
     }
-  });
+    });
 }
 
 function renderLinks() {
