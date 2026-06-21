@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-10",
+  "updatedAt": "2026-06-21",
   "stations": [
     {
       "name": "Borgomanero",
@@ -17,6 +17,14 @@
       "lat": "45.756313",
       "lon": "8.560500",
       "url": "https://maps.app.goo.gl/73QMzsaX6nESqhs68"
+    },
+    {
+      "name": "Lavatoio Mercurago",
+      "area": "Mercurago",
+      "notes": "fontanella pubblica",
+      "lat": "45.7458611111",
+      "lon": "8.5473527778",
+      "url": ""
     },
     {
       "name": "Fontana Santa",
