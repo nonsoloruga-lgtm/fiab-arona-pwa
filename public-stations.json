@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-21",
+  "updatedAt": "2026-06-22",
   "stations": [
     {
       "name": "Arona",
@@ -24,6 +24,14 @@
       "notes": "lavatoio",
       "lat": "45.7458611111",
       "lon": "8.5473527778",
+      "url": ""
+    },
+    {
+      "name": "Santa Caterina",
+      "area": "Leggiuno",
+      "notes": "punto ricarica",
+      "lat": "45.87715",
+      "lon": "8.5976277778",
       "url": ""
     },
     {

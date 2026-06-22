@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-21",
+  "updatedAt": "2026-06-22",
   "stations": [
     {
       "name": "Borgomanero",
@@ -24,6 +24,14 @@
       "notes": "fontanella pubblica",
       "lat": "45.7458611111",
       "lon": "8.5473527778",
+      "url": ""
+    },
+    {
+      "name": "Fontanella",
+      "area": "Giardini Pallanza",
+      "notes": "fontanella pubblica",
+      "lat": "45.9211527778",
+      "lon": "8.5509722222",
       "url": ""
     },
     {
