@@ -589,6 +589,7 @@ function initFountains() {
     setFilter("mine");
     $("#fountainsFormWrap").scrollIntoView({ behavior: "smooth", block: "start" });
     openProposal();
+    fillFormWithCurrentLocation("#fountainForm", "Non riesco a leggere la posizione della fontanella.");
   });
 
   $("#btnFountainsRefreshPublic").addEventListener("click", async () => {
@@ -811,6 +812,7 @@ function initStations() {
       const formWrap = $("#stationsFormWrap");
       formWrap.scrollIntoView({ behavior: "smooth", block: "start" });
       openModal();
+      fillFormWithCurrentLocation("#stationForm", "Non riesco a leggere la posizione della colonnina.");
     });
   }
 
