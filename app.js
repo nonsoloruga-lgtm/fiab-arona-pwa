@@ -275,6 +275,22 @@ async function shareMyLocation({ title, shareText, fallbackMessage }) {
   );
 }
 
+function openWhatsAppProposal(title, shareText) {
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = String(pos.coords.latitude.toFixed(6));
+      const lon = String(pos.coords.longitude.toFixed(6));
+      const text = `${shareText} — posizione: ${lat}, ${lon}\nhttps://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    },
+    () => {
+      alert("Attiva la localizzazione per inviare la posizione su WhatsApp.");
+    },
+    { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+  );
+}
+
 let state = loadState();
 let editingStationIndex = null;
 let fountainsEditingIndex = null;
@@ -651,6 +667,11 @@ function initFountains() {
     location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${body}`;
   });
 
+  $("#btnFountainsProposalWhatsApp").addEventListener("click", () => {
+    closeProposal();
+    openWhatsAppProposal("Proposta fontanella FIAB Arona", "Proposta fontanella FIAB Arona");
+  });
+
   $("#btnFountainsProposalLocation").addEventListener("click", () => {
     closeProposal();
     shareMyLocation({
@@ -877,6 +898,11 @@ function initStations() {
   $("#btnProposalEmail").addEventListener("click", () => {
     closeModal();
     location.href = mailtoHref;
+  });
+
+  $("#btnProposalWhatsApp").addEventListener("click", () => {
+    closeModal();
+    openWhatsAppProposal("Proposta colonnina FIAB Arona", "Proposta colonnina FIAB Arona");
   });
 
   $("#btnProposalLocation").addEventListener("click", () => {
