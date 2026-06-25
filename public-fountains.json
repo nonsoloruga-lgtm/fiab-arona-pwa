@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-22",
+  "updatedAt": "2026-06-25",
   "stations": [
     {
       "name": "Borgomanero",
@@ -17,6 +17,14 @@
       "lat": "45.756313",
       "lon": "8.560500",
       "url": "https://maps.app.goo.gl/73QMzsaX6nESqhs68"
+    },
+    {
+      "name": "Arona corso Europa",
+      "area": "Arona corso Europa",
+      "notes": "fontanella pubblica",
+      "lat": "45.753037",
+      "lon": "8.567241",
+      "url": "https://www.google.com/maps?q=45.753037%2C8.567241"
     },
     {
       "name": "Lavatoio Mercurago",

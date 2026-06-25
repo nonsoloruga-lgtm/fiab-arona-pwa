@@ -223,6 +223,19 @@ function requestCurrentLocation(onSuccess, fallbackMessage) {
   );
 }
 
+function fillFormWithCurrentLocation(formSelector, fallbackMessage) {
+  requestCurrentLocation(
+    (pos) => {
+      const latInput = document.querySelector(`${formSelector} [name="lat"]`);
+      const lonInput = document.querySelector(`${formSelector} [name="lon"]`);
+      if (latInput) latInput.value = String(pos.coords.latitude.toFixed(6));
+      if (lonInput) lonInput.value = String(pos.coords.longitude.toFixed(6));
+      alert("Coordinate compilate automaticamente.");
+    },
+    fallbackMessage,
+  );
+}
+
 let state = loadState();
 let editingStationIndex = null;
 let fountainsEditingIndex = null;
@@ -601,11 +614,11 @@ function initFountains() {
 
   $("#btnFountainsProposalLocation").addEventListener("click", () => {
     closeProposal();
-    shareCurrentLocation({
-      title: "Posizione fontanella",
-      shareText: "Proposta fontanella FIAB Arona",
-      fallbackMessage: "Non riesco a leggere la posizione della fontanella.",
-    });
+    fillFormWithCurrentLocation("#fountainForm", "Non riesco a leggere la posizione della fontanella.");
+  });
+
+  $("#btnFountainUseLocation").addEventListener("click", () => {
+    fillFormWithCurrentLocation("#fountainForm", "Non riesco a leggere la posizione della fontanella.");
   });
 
   const ensureMap = () => {
@@ -825,11 +838,11 @@ function initStations() {
 
   $("#btnProposalLocation").addEventListener("click", () => {
     closeModal();
-    shareCurrentLocation({
-      title: "Posizione colonnina",
-      shareText: "Proposta colonnina FIAB Arona",
-      fallbackMessage: "Non riesco a leggere la posizione della colonnina.",
-    });
+    fillFormWithCurrentLocation("#stationForm", "Non riesco a leggere la posizione della colonnina.");
+  });
+
+  $("#btnStationUseLocation").addEventListener("click", () => {
+    fillFormWithCurrentLocation("#stationForm", "Non riesco a leggere la posizione della colonnina.");
   });
 
   // Map modal (Leaflet)
