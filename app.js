@@ -230,9 +230,48 @@ function fillFormWithCurrentLocation(formSelector, fallbackMessage) {
       const lonInput = document.querySelector(`${formSelector} [name="lon"]`);
       if (latInput) latInput.value = String(pos.coords.latitude.toFixed(6));
       if (lonInput) lonInput.value = String(pos.coords.longitude.toFixed(6));
-      alert("Coordinate compilate automaticamente.");
     },
     fallbackMessage,
+  );
+}
+
+async function shareMyLocation({ title, shareText, fallbackMessage }) {
+  if (!navigator.geolocation) {
+    alert("Geolocalizzazione non supportata dal browser.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = String(pos.coords.latitude.toFixed(6));
+      const lon = String(pos.coords.longitude.toFixed(6));
+      const mapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
+      const text = `${shareText} — posizione: ${lat}, ${lon}`;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, text, url: mapsUrl });
+          return;
+        } catch (_) {}
+      }
+      const mailSubject = encodeURIComponent(title);
+      const mailBody = encodeURIComponent(`${text}\n${mapsUrl}`);
+      const whatsappText = encodeURIComponent(`${text}\n${mapsUrl}`);
+      const actions =
+        `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${mailSubject}&body=${mailBody}` +
+        `\n` +
+        `https://wa.me/?text=${whatsappText}`;
+      alert(
+        `${fallbackMessage}\n\nApri manualmente uno di questi collegamenti:\n${actions}`,
+      );
+    },
+    () => {
+      alert(
+        `${fallbackMessage}\n\n` +
+        `Su iPhone: Impostazioni > Privacy e sicurezza > Localizzazione > Safari > "Mentre usi l'app".\n` +
+        `Su Android: assicurati che la localizzazione sia attiva e che il browser abbia il permesso.`,
+      );
+    },
+    { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
   );
 }
 
@@ -589,7 +628,6 @@ function initFountains() {
     setFilter("mine");
     $("#fountainsFormWrap").scrollIntoView({ behavior: "smooth", block: "start" });
     openProposal();
-    fillFormWithCurrentLocation("#fountainForm", "Non riesco a leggere la posizione della fontanella.");
   });
 
   $("#btnFountainsRefreshPublic").addEventListener("click", async () => {
@@ -615,7 +653,11 @@ function initFountains() {
 
   $("#btnFountainsProposalLocation").addEventListener("click", () => {
     closeProposal();
-    fillFormWithCurrentLocation("#fountainForm", "Non riesco a leggere la posizione della fontanella.");
+    shareMyLocation({
+      title: "Proposta fontanella FIAB Arona",
+      shareText: "Proposta fontanella FIAB Arona",
+      fallbackMessage: "Non riesco a condividere la posizione della fontanella.",
+    });
   });
 
   $("#btnFountainUseLocation").addEventListener("click", () => {
@@ -812,7 +854,6 @@ function initStations() {
       const formWrap = $("#stationsFormWrap");
       formWrap.scrollIntoView({ behavior: "smooth", block: "start" });
       openModal();
-      fillFormWithCurrentLocation("#stationForm", "Non riesco a leggere la posizione della colonnina.");
     });
   }
 
@@ -840,7 +881,11 @@ function initStations() {
 
   $("#btnProposalLocation").addEventListener("click", () => {
     closeModal();
-    fillFormWithCurrentLocation("#stationForm", "Non riesco a leggere la posizione della colonnina.");
+    shareMyLocation({
+      title: "Proposta colonnina FIAB Arona",
+      shareText: "Proposta colonnina FIAB Arona",
+      fallbackMessage: "Non riesco a condividere la posizione della colonnina.",
+    });
   });
 
   $("#btnStationUseLocation").addEventListener("click", () => {
