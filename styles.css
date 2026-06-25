@@ -243,6 +243,11 @@ code {
   font-size: 18px;
 }
 
+.chip--maps {
+  padding: 12px 16px;
+  font-size: 18px;
+}
+
 .chip--active {
   border-color: rgba(0, 106, 167, 0.32);
   background: rgba(252, 222, 76, 0.62);
