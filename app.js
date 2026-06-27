@@ -639,6 +639,10 @@ function initFountains() {
   $("#btnFountainsProposalClose").addEventListener("click", closeProposal);
   mapModal.querySelectorAll("[data-close='fountains-map']").forEach((el) => el.addEventListener("click", closeMap));
   $("#btnFountainsMapClose").addEventListener("click", closeMap);
+  $("#btnFountainsMapPropose").addEventListener("click", () => {
+    closeMap();
+    openProposal();
+  });
 
   $("#btnFountainsPropose").addEventListener("click", () => {
     setFilter("mine");
