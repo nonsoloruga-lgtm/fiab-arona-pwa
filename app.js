@@ -676,6 +676,21 @@ function initFountains() {
     alert(ok ? "Fontanelle pubbliche aggiornate." : "Non riesco ad aggiornare (serve connessione).");
   });
 
+  $("#btnFountainsProposalEmail").addEventListener("click", () => {
+    closeProposal();
+    const subject = "Proposta fontanella FIAB Arona";
+    const body =
+      "Ciao! Vorrei proporre una fontanella per l’elenco pubblico.%0D%0A%0D%0A" +
+      "Nome:%0D%0A" +
+      "Comune/Zona:%0D%0A" +
+      "Indirizzo/Note:%0D%0A" +
+      "Lat:%0D%0A" +
+      "Lon:%0D%0A" +
+      "Link (opzionale):%0D%0A%0D%0A" +
+      "Grazie!";
+    location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${body}`;
+  });
+
   $("#btnFountainsProposalWhatsApp").addEventListener("click", () => {
     closeProposal();
     openWhatsAppProposal("Proposta fontanella FIAB Arona", "Proposta fontanella FIAB Arona");
@@ -902,6 +917,25 @@ function initStations() {
 
   $("#btnProposalClose").addEventListener("click", closeModal);
   proposalModal.querySelectorAll("[data-close]").forEach((el) => el.addEventListener("click", closeModal));
+
+  const mailtoHref = (() => {
+    const subject = "Proposta colonnina FIAB Arona";
+    const body =
+      "Ciao! Vorrei proporre una colonnina/punto ricarica per l’elenco pubblico.%0D%0A%0D%0A" +
+      "Nome:%0D%0A" +
+      "Comune/Zona:%0D%0A" +
+      "Indirizzo/Note:%0D%0A" +
+      "Lat:%0D%0A" +
+      "Lon:%0D%0A" +
+      "Link (opzionale):%0D%0A%0D%0A" +
+      "Grazie!";
+    return `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${body}`;
+  })();
+
+  $("#btnProposalEmail").addEventListener("click", () => {
+    closeModal();
+    location.href = mailtoHref;
+  });
 
   $("#btnProposalWhatsApp").addEventListener("click", () => {
     closeModal();
