@@ -222,17 +222,20 @@
 
         <section id="view-fountains" class="view">
           <div class="sectionhead">
-            <div class="sectionhead__title">Fontanelle</div>
-            <div class="sectionhead__subtitle">
-              Le fontanelle possono essere <b>Pubbliche</b> (uguali per tutti) e <b>Mie</b> (solo su questo dispositivo). Le pubbliche arrivano da un file sul sito: serve connessione per aggiornarle.
+            <div class="sectionhead__title sectionhead__title--fountains">
+              <span class="sectionhead__icon" aria-hidden="true">💧</span>
+              <span>Fontanelle</span>
             </div>
           </div>
 
           <div class="chips">
+            <button class="chip chip--active chip--maps" id="btnFountainsMap" type="button">
+              <img class="chip__image" src="./assets/fontanelle-map.png" alt="" />
+              <span>Mappa</span>
+            </button>
+            <button class="chip chip--accent chip--propose" id="btnFountainsPropose" type="button">Aggiungi una fontanella</button>
             <button class="chip" id="chipFountainsPublic" type="button">Elenco</button>
-            <button class="chip chip--ghost" id="btnFountainsPropose" type="button">Aggiungi una fontanella</button>
-            <button class="chip chip--accent" id="btnFountainsRefreshPublic" type="button">Aggiorna pubbliche</button>
-            <button class="chip chip--active chip--maps" id="btnFountainsMap" type="button">Mappa</button>
+            <button class="chip chip--ghost" id="btnFountainsRefreshPublic" type="button">Aggiorna pubbliche</button>
           </div>
 
           <div class="searchrow" id="fountainsSearchRow">
