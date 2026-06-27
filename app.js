@@ -687,12 +687,14 @@ function initFountains() {
   $("#btnFountainsMapPropose").addEventListener("click", () => {
     closeMap();
     openProposal();
+    updateLocationPermissionButtons();
   });
 
   $("#btnFountainsPropose").addEventListener("click", () => {
     setFilter("mine");
     $("#fountainsFormWrap").scrollIntoView({ behavior: "smooth", block: "start" });
     openProposal();
+    updateLocationPermissionButtons();
   });
 
   $("#btnFountainsRefreshPublic").addEventListener("click", async () => {
@@ -937,6 +939,7 @@ function initStations() {
       const formWrap = $("#stationsFormWrap");
       formWrap.scrollIntoView({ behavior: "smooth", block: "start" });
       openModal();
+      updateLocationPermissionButtons();
     });
   }
 
