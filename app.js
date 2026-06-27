@@ -302,10 +302,35 @@ function openWhatsAppProposal(title, shareText) {
 function requestLocationPermission(fallbackMessage) {
   requestCurrentLocation(
     () => {
+      const stationsBtn = document.querySelector("#btnProposalAllowLocation");
+      const fountainsBtn = document.querySelector("#btnFountainsProposalAllowLocation");
+      if (stationsBtn) stationsBtn.classList.add("hidden");
+      if (fountainsBtn) fountainsBtn.classList.add("hidden");
       alert("Posizione attivata correttamente. Ora puoi condividere la posizione.");
     },
     fallbackMessage,
   );
+}
+
+function updateLocationPermissionButtons() {
+  const show = !navigator.permissions;
+  const toggle = (selector, visible) => {
+    const el = document.querySelector(selector);
+    if (el) el.classList.toggle("hidden", !visible);
+  };
+  if (navigator.permissions?.query) {
+    navigator.permissions.query({ name: "geolocation" }).then((result) => {
+      const visible = result.state !== "granted";
+      toggle("#btnProposalAllowLocation", visible);
+      toggle("#btnFountainsProposalAllowLocation", visible);
+    }).catch(() => {
+      toggle("#btnProposalAllowLocation", show);
+      toggle("#btnFountainsProposalAllowLocation", show);
+    });
+  } else {
+    toggle("#btnProposalAllowLocation", show);
+    toggle("#btnFountainsProposalAllowLocation", show);
+  }
 }
 
 let state = loadState();
@@ -662,12 +687,14 @@ function initFountains() {
   $("#btnFountainsMapPropose").addEventListener("click", () => {
     closeMap();
     openProposal();
+    updateLocationPermissionButtons();
   });
 
   $("#btnFountainsPropose").addEventListener("click", () => {
     setFilter("mine");
     $("#fountainsFormWrap").scrollIntoView({ behavior: "smooth", block: "start" });
     openProposal();
+    updateLocationPermissionButtons();
   });
 
   $("#btnFountainsRefreshPublic").addEventListener("click", async () => {
@@ -694,6 +721,10 @@ function initFountains() {
   $("#btnFountainsProposalWhatsApp").addEventListener("click", () => {
     closeProposal();
     openWhatsAppProposal("Proposta fontanella FIAB Arona", "Proposta fontanella FIAB Arona");
+  });
+
+  $("#btnFountainsProposalAllowLocation").addEventListener("click", () => {
+    requestLocationPermission("Non riesco a leggere la posizione della fontanella.");
   });
 
   $("#btnFountainsProposalLocation").addEventListener("click", () => {
@@ -908,6 +939,7 @@ function initStations() {
       const formWrap = $("#stationsFormWrap");
       formWrap.scrollIntoView({ behavior: "smooth", block: "start" });
       openModal();
+      updateLocationPermissionButtons();
     });
   }
 
@@ -936,6 +968,10 @@ function initStations() {
   $("#btnProposalWhatsApp").addEventListener("click", () => {
     closeModal();
     openWhatsAppProposal("Proposta colonnina FIAB Arona", "Proposta colonnina FIAB Arona");
+  });
+
+  $("#btnProposalAllowLocation").addEventListener("click", () => {
+    requestLocationPermission("Non riesco a leggere la posizione della colonnina.");
   });
 
   $("#btnProposalLocation").addEventListener("click", () => {
@@ -1177,6 +1213,10 @@ function initInstallUi() {
     btnInstall.classList.remove("hidden");
   }
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+  updateLocationPermissionButtons();
+});
 
 function initServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
