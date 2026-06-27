@@ -4,6 +4,7 @@ const PUBLIC_FOUNTAINS_URL = "./public-fountains.json";
 // Email to receive proposals (admins will then add to public-stations.json).
 // Leave empty to hide the "Proponi" button.
 const PROPOSAL_EMAIL = "fiabarona@gmail.com";
+const PROPOSAL_WHATSAPP_NUMBER = "393891955724";
 
 const clone = (value) => {
   if (typeof structuredClone === "function") return structuredClone(value);
@@ -281,7 +282,7 @@ function openWhatsAppProposal(title, shareText) {
       const lat = String(pos.coords.latitude.toFixed(6));
       const lon = String(pos.coords.longitude.toFixed(6));
       const text = buildProposalText(shareText, lat, lon);
-      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+      const url = `https://wa.me/${PROPOSAL_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
       window.location.href = url;
     },
     () => {
