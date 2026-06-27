@@ -323,9 +323,19 @@ async function reverseGeocodeProposal(lat, lon) {
       address.county,
       address.state,
     ].filter(Boolean);
-    return parts[0] || String(data?.display_name || "").split(",")[0] || "";
+    const label = parts[0] || String(data?.display_name || "").split(",")[0] || "";
+    const noteParts = [
+      address.road,
+      address.neighbourhood,
+      address.suburb,
+      address.hamlet,
+    ].filter(Boolean);
+    return {
+      area: label,
+      note: noteParts.join(" - "),
+    };
   } catch (_) {
-    return "";
+    return { area: "", note: "" };
   }
 }
 
@@ -335,12 +345,12 @@ async function buildProposalEmailBody(shareText) {
       async (pos) => {
         const lat = String(pos.coords.latitude.toFixed(6));
         const lon = String(pos.coords.longitude.toFixed(6));
-        const area = await reverseGeocodeProposal(lat, lon);
+        const geo = await reverseGeocodeProposal(lat, lon);
         const body =
           `${shareText}\n\n` +
           `Nome:\n` +
-          `Comune/Zona:${area ? ` ${area}` : ""}\n` +
-          `Indirizzo/Note:\n` +
+          `Comune/Zona:${geo.area ? ` ${geo.area}` : ""}\n` +
+          `Indirizzo/Note:${geo.note ? ` ${geo.note}` : ""}\n` +
           `Lat: ${lat}\n` +
           `Lon: ${lon}\n` +
           `Link (opzionale):\n` +
