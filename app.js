@@ -289,8 +289,8 @@ function openWhatsAppProposal(title, shareText) {
         `Lon: ${lon}\n` +
         `Link (opzionale):\n` +
         `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
-      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-      window.open(url, "_blank", "noopener,noreferrer");
+      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+      window.location.href = url;
     },
     () => {
       alert("Attiva la localizzazione per inviare la posizione su WhatsApp.");
