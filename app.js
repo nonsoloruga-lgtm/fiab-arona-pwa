@@ -815,7 +815,16 @@ function initFountains() {
 
 function initNav() {
   document.querySelectorAll("[data-nav]").forEach((el) => {
-    el.addEventListener("click", () => navTo(el.dataset.nav));
+    el.addEventListener("click", () => {
+      const target = el.dataset.nav;
+      navTo(target);
+      if (target === "fountains") {
+        setTimeout(() => {
+          const mapBtn = document.querySelector("#btnFountainsMap");
+          if (mapBtn) mapBtn.click();
+        }, 0);
+      }
+    });
   });
 }
 
