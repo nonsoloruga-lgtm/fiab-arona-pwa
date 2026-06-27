@@ -638,7 +638,10 @@ function initFountains() {
   proposalModal.querySelectorAll("[data-close='fountains-proposal']").forEach((el) => el.addEventListener("click", closeProposal));
   $("#btnFountainsProposalClose").addEventListener("click", closeProposal);
   mapModal.querySelectorAll("[data-close='fountains-map']").forEach((el) => el.addEventListener("click", closeMap));
-  $("#btnFountainsMapClose").addEventListener("click", closeMap);
+  $("#btnFountainsMapClose").addEventListener("click", () => {
+    closeMap();
+    navTo("home");
+  });
   $("#btnFountainsMapPropose").addEventListener("click", () => {
     closeMap();
     openProposal();
@@ -936,7 +939,10 @@ function initStations() {
   const closeMap = () => stationsMapModal.classList.add("hidden");
   const openMap = () => stationsMapModal.classList.remove("hidden");
   stationsMapModal.querySelectorAll("[data-close='map']").forEach((el) => el.addEventListener("click", closeMap));
-  $("#btnMapClose").addEventListener("click", closeMap);
+  $("#btnMapClose").addEventListener("click", () => {
+    closeMap();
+    navTo("home");
+  });
 
   let map = null;
   let markersLayer = null;
@@ -1003,6 +1009,11 @@ function initStations() {
   $("#btnStationsMap").addEventListener("click", () => {
     openMap();
     renderMapMarkers();
+  });
+
+  $("#btnStationsMapPropose").addEventListener("click", () => {
+    closeMap();
+    openModal();
   });
 
   $("#btnMapMyPos").addEventListener("click", () => {
