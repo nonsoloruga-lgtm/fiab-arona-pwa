@@ -302,10 +302,35 @@ function openWhatsAppProposal(title, shareText) {
 function requestLocationPermission(fallbackMessage) {
   requestCurrentLocation(
     () => {
+      const stationsBtn = document.querySelector("#btnProposalAllowLocation");
+      const fountainsBtn = document.querySelector("#btnFountainsProposalAllowLocation");
+      if (stationsBtn) stationsBtn.classList.add("hidden");
+      if (fountainsBtn) fountainsBtn.classList.add("hidden");
       alert("Posizione attivata correttamente. Ora puoi condividere la posizione.");
     },
     fallbackMessage,
   );
+}
+
+function updateLocationPermissionButtons() {
+  const show = !navigator.permissions;
+  const toggle = (selector, visible) => {
+    const el = document.querySelector(selector);
+    if (el) el.classList.toggle("hidden", !visible);
+  };
+  if (navigator.permissions?.query) {
+    navigator.permissions.query({ name: "geolocation" }).then((result) => {
+      const visible = result.state !== "granted";
+      toggle("#btnProposalAllowLocation", visible);
+      toggle("#btnFountainsProposalAllowLocation", visible);
+    }).catch(() => {
+      toggle("#btnProposalAllowLocation", show);
+      toggle("#btnFountainsProposalAllowLocation", show);
+    });
+  } else {
+    toggle("#btnProposalAllowLocation", show);
+    toggle("#btnFountainsProposalAllowLocation", show);
+  }
 }
 
 let state = loadState();
@@ -1185,6 +1210,10 @@ function initInstallUi() {
     btnInstall.classList.remove("hidden");
   }
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+  updateLocationPermissionButtons();
+});
 
 function initServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
