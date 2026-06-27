@@ -299,6 +299,15 @@ function openWhatsAppProposal(title, shareText) {
   );
 }
 
+function requestLocationPermission(fallbackMessage) {
+  requestCurrentLocation(
+    () => {
+      alert("Posizione attivata correttamente. Ora puoi condividere la posizione.");
+    },
+    fallbackMessage,
+  );
+}
+
 let state = loadState();
 let editingStationIndex = null;
 let fountainsEditingIndex = null;
@@ -687,6 +696,10 @@ function initFountains() {
     openWhatsAppProposal("Proposta fontanella FIAB Arona", "Proposta fontanella FIAB Arona");
   });
 
+  $("#btnFountainsProposalAllowLocation").addEventListener("click", () => {
+    requestLocationPermission("Non riesco a leggere la posizione della fontanella.");
+  });
+
   $("#btnFountainsProposalLocation").addEventListener("click", () => {
     closeProposal();
     shareMyLocation({
@@ -927,6 +940,10 @@ function initStations() {
   $("#btnProposalWhatsApp").addEventListener("click", () => {
     closeModal();
     openWhatsAppProposal("Proposta colonnina FIAB Arona", "Proposta colonnina FIAB Arona");
+  });
+
+  $("#btnProposalAllowLocation").addEventListener("click", () => {
+    requestLocationPermission("Non riesco a leggere la posizione della colonnina.");
   });
 
   $("#btnProposalLocation").addEventListener("click", () => {
