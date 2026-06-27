@@ -280,15 +280,7 @@ function openWhatsAppProposal(title, shareText) {
     (pos) => {
       const lat = String(pos.coords.latitude.toFixed(6));
       const lon = String(pos.coords.longitude.toFixed(6));
-      const text =
-        `${shareText}\n\n` +
-        `Nome:\n` +
-        `Comune/Zona:\n` +
-        `Indirizzo/Note:\n` +
-        `Lat: ${lat}\n` +
-        `Lon: ${lon}\n` +
-        `Link (opzionale):\n` +
-        `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
+      const text = buildProposalText(shareText, lat, lon);
       const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
       window.location.href = url;
     },
@@ -296,6 +288,19 @@ function openWhatsAppProposal(title, shareText) {
       alert("Attiva la localizzazione per inviare la posizione su WhatsApp.");
     },
     { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+  );
+}
+
+function buildProposalText(shareText, lat, lon) {
+  return (
+    `${shareText}\n\n` +
+    `Nome:\n` +
+    `Comune/Zona:\n` +
+    `Indirizzo/Note:\n` +
+    `Lat: ${lat}\n` +
+    `Lon: ${lon}\n` +
+    `Link (opzionale):\n` +
+    `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`
   );
 }
 
@@ -705,17 +710,21 @@ function initFountains() {
 
   $("#btnFountainsProposalEmail").addEventListener("click", () => {
     closeProposal();
-    const subject = "Proposta fontanella FIAB Arona";
-    const body =
-      "Ciao! Vorrei proporre una fontanella per l’elenco pubblico.%0D%0A%0D%0A" +
-      "Nome:%0D%0A" +
-      "Comune/Zona:%0D%0A" +
-      "Indirizzo/Note:%0D%0A" +
-      "Lat:%0D%0A" +
-      "Lon:%0D%0A" +
-      "Link (opzionale):%0D%0A%0D%0A" +
-      "Grazie!";
-    location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${body}`;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = String(pos.coords.latitude.toFixed(6));
+        const lon = String(pos.coords.longitude.toFixed(6));
+        const subject = "Proposta fontanella FIAB Arona";
+        const body = `${buildProposalText("Proposta fontanella FIAB Arona", lat, lon)}\n\nGrazie!`;
+        location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      },
+      () => {
+        const subject = "Proposta fontanella FIAB Arona";
+        const body = `Ciao! Vorrei proporre una fontanella per l’elenco pubblico.\n\nNome:\nComune/Zona:\nIndirizzo/Note:\nLat:\nLon:\nLink (opzionale):\n\nGrazie!`;
+        location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      },
+      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+    );
   });
 
   $("#btnFountainsProposalWhatsApp").addEventListener("click", () => {
@@ -962,7 +971,19 @@ function initStations() {
 
   $("#btnProposalEmail").addEventListener("click", () => {
     closeModal();
-    location.href = mailtoHref;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = String(pos.coords.latitude.toFixed(6));
+        const lon = String(pos.coords.longitude.toFixed(6));
+        const subject = "Proposta colonnina FIAB Arona";
+        const body = `${buildProposalText("Proposta colonnina FIAB Arona", lat, lon)}\n\nGrazie!`;
+        location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      },
+      () => {
+        location.href = mailtoHref;
+      },
+      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+    );
   });
 
   $("#btnProposalWhatsApp").addEventListener("click", () => {
