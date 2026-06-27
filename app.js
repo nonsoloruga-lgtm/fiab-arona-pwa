@@ -3,7 +3,7 @@ const PUBLIC_STATIONS_URL = "./public-stations.json";
 const PUBLIC_FOUNTAINS_URL = "./public-fountains.json";
 // Email to receive proposals (admins will then add to public-stations.json).
 // Leave empty to hide the "Proponi" button.
-const PROPOSAL_EMAIL = "soloruga@libero.it";
+const PROPOSAL_EMAIL = "fiabarona@gmail.com";
 
 const clone = (value) => {
   if (typeof structuredClone === "function") return structuredClone(value);
@@ -280,7 +280,15 @@ function openWhatsAppProposal(title, shareText) {
     (pos) => {
       const lat = String(pos.coords.latitude.toFixed(6));
       const lon = String(pos.coords.longitude.toFixed(6));
-      const text = `${shareText} — posizione: ${lat}, ${lon}\nhttps://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
+      const text =
+        `${shareText}\n\n` +
+        `Nome:\n` +
+        `Comune/Zona:\n` +
+        `Indirizzo/Note:\n` +
+        `Lat: ${lat}\n` +
+        `Lon: ${lon}\n` +
+        `Link (opzionale):\n` +
+        `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}`;
       const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
       window.open(url, "_blank", "noopener,noreferrer");
     },
