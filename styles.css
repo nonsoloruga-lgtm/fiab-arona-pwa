@@ -239,13 +239,10 @@ code {
 }
 
 .chip--maps {
-  padding: 12px 16px;
-  font-size: 18px;
-}
-
-.chip--maps {
-  padding: 12px 16px;
-  font-size: 18px;
+  padding: 10px 14px;
+  font-size: 15px;
+  transform: scale(1.08);
+  transform-origin: left center;
 }
 
 .chip--active {
@@ -262,6 +259,11 @@ code {
 
 .chip--ghost {
   background: transparent;
+}
+
+.chip--priority {
+  border-color: rgba(0, 106, 167, 0.26);
+  box-shadow: 0 8px 18px rgba(0, 106, 167, 0.10);
 }
 
 .pill {
@@ -522,6 +524,18 @@ code {
 .sectionhead__title {
   font-weight: 900;
   font-size: 16px;
+}
+
+.sectionhead__title--fountains {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 22px;
+}
+
+.sectionhead__icon {
+  font-size: 22px;
+  line-height: 1;
 }
 
 .sectionhead__subtitle {
