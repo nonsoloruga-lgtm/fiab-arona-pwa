@@ -825,9 +825,9 @@ function initNav() {
     el.addEventListener("click", () => {
       const target = el.dataset.nav;
       navTo(target);
-      if (target === "fountains") {
+      if (target === "fountains" || target === "stations") {
         setTimeout(() => {
-          const mapBtn = document.querySelector("#btnFountainsMap");
+          const mapBtn = document.querySelector(target === "fountains" ? "#btnFountainsMap" : "#btnStationsMap");
           if (mapBtn) mapBtn.click();
         }, 0);
       }
