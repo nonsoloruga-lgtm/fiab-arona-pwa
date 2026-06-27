@@ -304,6 +304,67 @@ function buildProposalText(shareText, lat, lon) {
   );
 }
 
+async function reverseGeocodeProposal(lat, lon) {
+  try {
+    const url =
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}` +
+      `&lon=${encodeURIComponent(lon)}&zoom=18&addressdetails=1`;
+    const res = await fetch(url, {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) return "";
+    const data = await res.json();
+    const address = data?.address || {};
+    const parts = [
+      address.town,
+      address.city,
+      address.village,
+      address.municipality,
+      address.county,
+      address.state,
+    ].filter(Boolean);
+    return parts[0] || String(data?.display_name || "").split(",")[0] || "";
+  } catch (_) {
+    return "";
+  }
+}
+
+async function buildProposalEmailBody(shareText) {
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = String(pos.coords.latitude.toFixed(6));
+        const lon = String(pos.coords.longitude.toFixed(6));
+        const area = await reverseGeocodeProposal(lat, lon);
+        const body =
+          `${shareText}\n\n` +
+          `Nome:\n` +
+          `Comune/Zona:${area ? ` ${area}` : ""}\n` +
+          `Indirizzo/Note:\n` +
+          `Lat: ${lat}\n` +
+          `Lon: ${lon}\n` +
+          `Link (opzionale):\n` +
+          `https://www.google.com/maps?q=${encodeURIComponent(`${lat},${lon}`)}\n\n` +
+          `Grazie!`;
+        resolve(body);
+      },
+      () => {
+        resolve(
+          `${shareText}\n\n` +
+          `Nome:\n` +
+          `Comune/Zona:\n` +
+          `Indirizzo/Note:\n` +
+          `Lat:\n` +
+          `Lon:\n` +
+          `Link (opzionale):\n\n` +
+          `Grazie!`,
+        );
+      },
+      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
+    );
+  });
+}
+
 function requestLocationPermission(fallbackMessage) {
   requestCurrentLocation(
     () => {
@@ -710,21 +771,10 @@ function initFountains() {
 
   $("#btnFountainsProposalEmail").addEventListener("click", () => {
     closeProposal();
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = String(pos.coords.latitude.toFixed(6));
-        const lon = String(pos.coords.longitude.toFixed(6));
-        const subject = "Proposta fontanella FIAB Arona";
-        const body = `${buildProposalText("Proposta fontanella FIAB Arona", lat, lon)}\n\nGrazie!`;
-        location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      },
-      () => {
-        const subject = "Proposta fontanella FIAB Arona";
-        const body = `Ciao! Vorrei proporre una fontanella per l’elenco pubblico.\n\nNome:\nComune/Zona:\nIndirizzo/Note:\nLat:\nLon:\nLink (opzionale):\n\nGrazie!`;
-        location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      },
-      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
-    );
+    buildProposalEmailBody("Proposta fontanella FIAB Arona").then((body) => {
+      const subject = "Proposta fontanella FIAB Arona";
+      location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
   });
 
   $("#btnFountainsProposalWhatsApp").addEventListener("click", () => {
@@ -971,19 +1021,10 @@ function initStations() {
 
   $("#btnProposalEmail").addEventListener("click", () => {
     closeModal();
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = String(pos.coords.latitude.toFixed(6));
-        const lon = String(pos.coords.longitude.toFixed(6));
-        const subject = "Proposta colonnina FIAB Arona";
-        const body = `${buildProposalText("Proposta colonnina FIAB Arona", lat, lon)}\n\nGrazie!`;
-        location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      },
-      () => {
-        location.href = mailtoHref;
-      },
-      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 },
-    );
+    buildProposalEmailBody("Proposta colonnina FIAB Arona").then((body) => {
+      const subject = "Proposta colonnina FIAB Arona";
+      location.href = `mailto:${encodeURIComponent(PROPOSAL_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
   });
 
   $("#btnProposalWhatsApp").addEventListener("click", () => {
