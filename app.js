@@ -1221,7 +1221,7 @@ window.addEventListener("DOMContentLoaded", () => {
 function initServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
   navigator.serviceWorker
-    .register("./sw.js")
+    .register("./sw.js?v=2026-06-27-1", { updateViaCache: "none" })
     .then((reg) => {
       reg.update().catch(() => {});
       setInterval(() => reg.update().catch(() => {}), 60_000);

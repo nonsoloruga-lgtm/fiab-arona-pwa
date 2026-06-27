@@ -1,5 +1,5 @@
-const CACHE_NAME = "fiab-arona-pwa-v4";
-const BUILD = "2026-05-19-1";
+const CACHE_NAME = "fiab-arona-pwa-v5";
+const BUILD = "2026-06-27-1";
 
 const CORE_ASSETS = [
   "./",
