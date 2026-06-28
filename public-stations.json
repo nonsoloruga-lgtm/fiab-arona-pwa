@@ -43,6 +43,14 @@
       "url": "https://www.google.com/maps?q=45.817880%2C8.550615"
     },
     {
+      "name": "Ricarica Ebike",
+      "area": "Teatro Maggiore Verbania Intra",
+      "notes": "punto ricarica",
+      "lat": "45.930097",
+      "lon": "8.571622",
+      "url": "https://www.google.com/maps?q=45.930097%2C8.571622"
+    },
+    {
       "name": "Lavatoio Mercurago",
       "area": "Mercurago",
       "notes": "lavatoio",
