@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-22",
+  "updatedAt": "2026-06-28",
   "stations": [
     {
       "name": "Arona",
@@ -17,6 +17,30 @@
       "lat": "45.751208",
       "lon": "8.561465",
       "url": "https://maps.app.goo.gl/om1P6z8dwnw6wfkk7"
+    },
+    {
+      "name": "RICARICA EBIKE",
+      "area": "lungolago Meina",
+      "notes": "punto ricarica",
+      "lat": "45.789424",
+      "lon": "8.540109",
+      "url": "https://www.google.com/maps?q=45.789424%2C8.540109"
+    },
+    {
+      "name": "ricarica Ebike",
+      "area": "Lesa",
+      "notes": "lungolago",
+      "lat": "45.829033",
+      "lon": "8.565812",
+      "url": "https://www.google.com/maps?q=45.829033%2C8.565812"
+    },
+    {
+      "name": "cimitero/SS33",
+      "area": "Solcio di Lesa",
+      "notes": "punto ricarica",
+      "lat": "45.817880",
+      "lon": "8.550615",
+      "url": "https://www.google.com/maps?q=45.817880%2C8.550615"
     },
     {
       "name": "Lavatoio Mercurago",
