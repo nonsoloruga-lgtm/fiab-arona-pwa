@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-25",
+  "updatedAt": "2026-06-28",
   "stations": [
     {
       "name": "Borgomanero",
@@ -19,6 +19,14 @@
       "url": "https://maps.app.goo.gl/73QMzsaX6nESqhs68"
     },
     {
+      "name": "fontanella",
+      "area": "Arona piazza del Popolo",
+      "notes": "fontanella pubblica",
+      "lat": "45.763201",
+      "lon": "8.559495",
+      "url": "https://www.google.com/maps?q=45.763201%2C8.559495"
+    },
+    {
       "name": "Arona corso Europa",
       "area": "Arona corso Europa",
       "notes": "fontanella pubblica",
@@ -27,12 +35,28 @@
       "url": "https://www.google.com/maps?q=45.753037%2C8.567241"
     },
     {
+      "name": "area cani",
+      "area": "Lesa",
+      "notes": "fontanella pubblica",
+      "lat": "45.821268",
+      "lon": "8.558088",
+      "url": "https://www.google.com/maps?q=45.821268%2C8.558088"
+    },
+    {
       "name": "Oleggio Castello",
       "area": "Oleggio Castello",
       "notes": "fontanella pubblica",
       "lat": "45.751573",
       "lon": "8.531466",
       "url": "https://www.google.com/maps?q=45.751573%2C8.531466"
+    },
+    {
+      "name": "fontanella",
+      "area": "lungolago Belgirate",
+      "notes": "fontanella pubblica",
+      "lat": "45.838996",
+      "lon": "8.573060",
+      "url": "https://www.google.com/maps?q=45.838996%2C8.573060"
     },
     {
       "name": "Lavatoio Mercurago",
