@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-28",
+  "updatedAt": "2026-06-29",
   "stations": [
     {
       "name": "Arona",
@@ -49,6 +49,14 @@
       "lat": "45.930097",
       "lon": "8.571622",
       "url": "https://www.google.com/maps?q=45.930097%2C8.571622"
+    },
+    {
+      "name": "Valtournenche",
+      "area": "Valtournenche",
+      "notes": "punto ricarica",
+      "lat": "45.893214",
+      "lon": "7.647429",
+      "url": "https://www.google.com/maps?q=45.893214%2C7.647429"
     },
     {
       "name": "Lavatoio Mercurago",
